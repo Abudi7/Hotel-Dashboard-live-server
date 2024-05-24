@@ -5,11 +5,24 @@
     margin-top: 2rem;
     border-radius: 2rem;
     box-shadow: 2px 2px 22px grey;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .header .container {
     margin-left: 2rem;
     margin-right: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-text {
+    justify-content: end;
 }
 
 .header-text li {

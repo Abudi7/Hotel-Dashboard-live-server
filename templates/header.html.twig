@@ -15,8 +15,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom header">
-  <div class="container">
+<nav class="navbar-expand-lg header">
     <a class="navbar-brand" href="#">
             <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" width="50"> Hotel Dashboard
     </a>
@@ -64,13 +63,10 @@
                     <li><a class="dropdown-item" href="{{ path('app_profile', {'id': app.user.id}) }}">Edit Profile</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="{{ path('app_my_profile', {'id': app.user.id}) }}">View Profile</a></li>
-                </ul>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_logout') }}">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                </ul>
             </li>
         {% else %}
             <li class="nav-item">
@@ -81,7 +77,6 @@
         {% endif %}
       </ul>
     </div>
-  </div>
 </nav>
 
 
