@@ -9,20 +9,21 @@
   <link rel="icon" href="{{ asset('img/logo/favicon.ico') }}" type="image/x-icon">
   <!-- CSS -->
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/header.css') }}">
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom header">
   <div class="container">
     <a class="navbar-brand" href="#">
-        <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" width="50"> Hotel Dashboard
+            <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" width="50"> Hotel Dashboard
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="collapse navbar-collapse header-text" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
               <a class="nav-link" href="{{ path('app_home') }}">
@@ -83,5 +84,4 @@
   </div>
 </nav>
 
-</body>
-</html>
+

@@ -1,0 +1,17 @@
+.header {
+    background-color: black !important;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    border-radius: 2rem;
+    box-shadow: 2px 2px 22px grey;
+}
+
+.header .container {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.header-text li {
+    padding: 1rem;
+}

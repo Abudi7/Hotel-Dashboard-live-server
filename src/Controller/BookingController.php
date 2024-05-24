@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class BookingController extends AbstractController
 {
@@ -28,7 +30,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/new/{roomId}', name: 'app_booking_new')]
-    public function new(Request $request, int $roomId, BookingRepository $bookingRepository): Response
+    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, MailerInterface $mailer): Response
     {
         $booking = new Booking();
         $form = $this->createForm(BookingType::class, $booking);
@@ -37,7 +39,7 @@ class BookingController extends AbstractController
         // Fetch available rooms based on selected date range
         $startDate = $form->get('startdate')->getData();
         $endDate = $form->get('enddate')->getData();
-        
+    
         if ($form->isSubmitted() && $form->isValid()) {
             // Get the logged-in user
             $user = $this->getUser();
@@ -60,9 +62,40 @@ class BookingController extends AbstractController
             $this->entityManager->persist($booking);
             $this->entityManager->flush();
     
+            // Calculate number of nights
+            $numberOfNights = $booking->getStartdate()->diff($booking->getEnddate())->days;
+    
+            // Calculate total price
+            $totalPrice = $numberOfNights * $room->getPrice();
+    
+            // Construct email content
+            $emailContent = "
+                <p>Dear $customerName,</p>
+                <p>Thank you for booking with us!</p>
+                <p>Here are your booking details:</p>
+                <ul>
+                    <li>Number of Nights: $numberOfNights</li>
+                    <li>Price per Night: $" . number_format($room->getPrice(), 2) . "</li>
+                    <li>Total Price Paid: $" . number_format($totalPrice, 2) . "</li>
+                </ul>
+                <p>If you have any questions or need further assistance, feel free to contact us.</p>
+                <p>Best regards,<br>Hotel Dashboard Team</p>
+            ";
+    
+            // Send email with invoice and thank you message
+            $email = (new Email())
+                ->from('info-Alshalal-Hiess@hotel-dashboard.at')
+                ->to($user->getEmail())
+                ->subject('Booking Confirmation and Invoice')
+                ->html($emailContent);
+    
+            $mailer->send($email);
+    
+            // Return a response if needed
+            //return new Response('Email sent successfully!');
             return $this->redirectToRoute('app_booking_success');
         }
-        
+    
         // Check if start and end dates are not null before fetching available rooms
         if ($startDate !== null && $endDate !== null) {
             // Retrieve available rooms by date range from the repository
@@ -79,12 +112,36 @@ class BookingController extends AbstractController
     
 
 
-    #[Route('/booking/success', name: 'app_booking_success')]
-    public function success(): Response
-    {
-        return $this->render('booking/success.html.twig');
-    }
 
+
+    #[Route('/booking/success', name: 'app_booking_success')]
+    public function success(BookingRepository $bookingRepository): Response
+    {
+        // Fetch the latest booking details from the repository
+        $latestBooking = $bookingRepository->findLatestBooking();
+
+        // Check if a booking was found
+        if ($latestBooking === null) {
+            throw $this->createNotFoundException('No booking found.');
+        }
+
+        // Calculate the price per night
+        $room = $latestBooking->getRooms();
+        $roomPrice = $room->getPrice();
+        $numberOfNights = $latestBooking->getNumberOfNights();
+        $pricePerNight = $roomPrice;
+
+        // Calculate total price paid
+        $totalPrice = $roomPrice * $numberOfNights;
+
+        // Pass the necessary data to the template
+        return $this->render('booking/success.html.twig', [
+            'booking' => $latestBooking,
+            'pricePerNight' => $pricePerNight,
+            'numberOfNights' => $numberOfNights,
+            'totalPrice' => $totalPrice,
+        ]);
+    }
 
     #[Route('/booking', name: 'app_booking')]
     public function index(BookingRepository $bookingRepository): Response

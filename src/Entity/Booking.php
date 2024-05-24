@@ -37,7 +37,11 @@ class Booking
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Address $Address = null;
 
-
+    
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $pricePerNight;
 
     public function __construct()
     {
@@ -132,6 +136,23 @@ class Booking
 
         return $this;
     }
+
+     /**
+     * Calculate the number of nights for the booking.
+     *
+     * @return int|null The number of nights or null if the start or end date is not set.
+     */
+    public function getNumberOfNights(): ?int
+    {
+        if ($this->startdate === null || $this->enddate === null) {
+            return null;
+        }
+
+        $interval = $this->startdate->diff($this->enddate);
+
+        return $interval->days;
+    }
+    
 
 
 }

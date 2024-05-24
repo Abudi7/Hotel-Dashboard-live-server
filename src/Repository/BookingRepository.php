@@ -38,6 +38,21 @@ class BookingRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+
+     /**
+     * Find the latest booking.
+     *
+     * @return Booking|null The latest booking entity or null if no booking is found.
+     */
+    public function findLatestBooking(): ?Booking
+    {
+        return $this->createQueryBuilder('b')
+            ->orderBy('b.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Booking[] Returns an array of Booking objects
     //     */

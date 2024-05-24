@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation and Invoice</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .booking-details {
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Booking Confirmation and Invoice</h2>
+        </div>
+        <div class="booking-details">
+            <p>Dear {{ customerName }},</p>
+            <p>Thank you for booking with us!</p>
+            <p>Here are your booking details:</p>
+            <ul>
+                <li>Number of Nights: {{ numberOfNights }}</li>
+                <li>Price per Night: ${{ pricePerNight }}</li>
+                <li>Total Price Paid: ${{ totalPrice }}</li>
+            </ul>
+            <p>If you have any questions or need further assistance, feel free to contact us.</p>
+        </div>
+        <div class="footer">
+            <p>Best regards,<br>Hotel Dashboard Team</p>
+        </div>
+    </div>
+</body>
+</html>
