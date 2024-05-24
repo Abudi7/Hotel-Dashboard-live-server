@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Rooms{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="mt-4">Create new Room</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    {{ include('rooms/_form.html.twig') }}
+                </div>
+            </div>
+            <a href="{{ path('app_rooms_index') }}" class="btn btn-secondary mt-3 mb-3">Back to list</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

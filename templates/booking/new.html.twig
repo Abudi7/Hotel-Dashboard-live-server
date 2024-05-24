@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Booking{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>New Booking</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            {{ form_start(form) }}
+            <div class="row">
+                <!-- Billing Address Section -->
+                <div class="col-md-6">
+                    <h3>Billing Address</h3>
+                    <div class="form-group">
+                        {{ form_row(form.address.street, {'attr': {'class': 'form-control', 'placeholder': 'Street'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.address.city, {'attr': {'class': 'form-control', 'placeholder': 'City'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.address.postalCode, {'attr': {'class': 'form-control', 'placeholder': 'Postal Code'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.address.country, {'attr': {'class': 'form-control', 'placeholder': 'Country'}}) }}
+                    </div>
+                </div>
+                <!-- Booking Details Section -->
+                <div class="col-md-6">
+                    <h3>Booking Details</h3>
+                    <div class="form-group">
+                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Start Date'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'End Date'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.customername, {'attr': {'class': 'form-control', 'placeholder': 'Customer Name'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.rooms, {'attr': {'class': 'form-control', 'placeholder': 'Room'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    {{ form_row(form.submit, {'label': 'Book Now', 'attr': {'class': 'btn btn-primary'}}) }}
+                </div>
+            </div>
+            {{ form_end(form) }}
+            
+            {% if availableRooms is not empty %}
+            <h2 class="mt-5">Available Rooms</h2>
+            <div class="row">
+                {% for room in availableRooms %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ room.name }}</h5>
+                            <p class="card-text">Price: ${{ room.price }}</p>
+                            <p class="card-text">Type: {{ room.type }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="col-12">
+                <p class="text-center text-danger">No rooms available for the selected dates.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

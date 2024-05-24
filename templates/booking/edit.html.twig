@@ -1,0 +1,35 @@
+{# templates/booking/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Booking{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Edit Booking</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_label(form.customername) }}
+                    {{ form_widget(form.customername, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.startdate) }}
+                    {{ form_widget(form.startdate, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.enddate) }}
+                    {{ form_widget(form.enddate, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.rooms) }}
+                    {{ form_widget(form.rooms, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

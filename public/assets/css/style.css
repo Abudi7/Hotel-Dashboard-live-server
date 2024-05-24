@@ -1,0 +1,93 @@
+/* Custom styles for the header */
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Rounded:wght@400;700&display=swap');
+
+body {
+  font-family: 'SF Pro Rounded', sans-serif;
+}
+
+/* Custom styles for the header */
+.navbar-custom {
+    background-color: #343a40;
+    padding: 15px 0;
+  }
+  
+  .navbar-custom .navbar-brand {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  
+  .navbar-custom .navbar-nav .nav-link {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .navbar-custom .navbar-nav .nav-link:hover {
+    color: #f8f9fa !important;
+  }
+  
+  /* Move navbar items to the right */
+  .navbar-custom .navbar-nav {
+    margin-left: auto;
+  }
+  
+  /* Custom styles for the footer */
+  footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .footer-text {
+    font-size: 14px;
+  }
+  
+  .footer-text a {
+    color: #f8f9fa;
+    text-decoration: none;
+  }
+  
+  .footer-text a:hover {
+    color: #dee2e6;
+  }
+  
+
+  /* image Room Index Home Style */
+
+  .room-card {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .room-img {
+    height: 250px; /* Increased height for better image display */
+    width: 100%; /* Set width to 100% for responsive layout */
+    object-fit: cover;
+  }
+
+  .card-img-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 128, 0, 0.7); /* Green background with transparency */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px; /* Add padding for content spacing */
+  }
+
+  .card-title a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .card-title a:hover {
+    text-decoration: underline;
+  }

@@ -1,0 +1,22 @@
+{# templates/security/view_profile.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <img src="{{ asset('img/profile/' ~ user.img) }}" class="card-img-top" alt="User Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ user.name }} {{ user.surname }}</h5>
+                        <p class="card-text">Email: {{ user.email }}</p>
+                        <p class="card-text">Last Updated: {{ user.updatedAt|date('Y-m-d H:i:s') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

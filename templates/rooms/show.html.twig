@@ -1,0 +1,49 @@
+{# templates/rooms/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Room: {{ room.name }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Show Room: {{ room.name }}</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ asset('img/image-rooms/' ~ room.img) }}" class="img-fluid" alt="{{ room.name }}">
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.name }}</h5>
+                    <p class="card-text">{{ room.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Price:</strong> ${{ room.price }}</li>
+                        <li class="list-group-item"><strong>Created at:</strong> {{ room.createdat ? room.createdat|date('Y-m-d H:i:s') : '' }}</li>
+                        <li class="list-group-item"><strong>Type:</strong> {{ room.type }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="{{ path('app_rooms_index') }}" class="btn btn-primary mr-2">Back</a>
+                            {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('app_booking_new', {'roomId': room.id}) }}" class="btn btn-success">Book Now</a>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_rooms_edit', {'id': room.id}) }}" class="btn btn-warning">Edit</a>
+                            {% endif %}
+                        </div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <form method="post" action="{{ path('app_rooms_delete', {'id': room.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ room.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{# templates/home/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        .room-card {
+            position: relative;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        .room-img {
+            height: 150px; /* Adjusted height for better display */
+            object-fit: cover;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .card-img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 128, 0, 0.6); /* Green background with more transparency */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 10px;
+        }
+        .card-title a {
+            color: white;
+            text-decoration: none;
+        }
+        .card-title a:hover {
+            text-decoration: underline;
+        }
+        .form-inline .form-group {
+            margin-right: 10px;
+        }
+        .form-inline .form-group.mt-2 {
+            margin-top: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h1>Welcome to Our Hotel</h1>
+                <p class="lead">Indulge in comfort, tranquility, and luxury at our hotel. Experience hospitality like never before.</p>
+                <p class="lead">Book your stay now!</p>
+            </div>
+            <div class="d-flex justify-content-center mb-4">
+                {{ form_start(form, {'attr': {'class': 'form-inline'}}) }}
+                    <div class="form-group mr-2">
+                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Check-in Date', 'autocomplete': 'off'}}) }}
+                    </div>
+                    <div class="form-group mr-2">
+                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'Check-out Date', 'autocomplete': 'off'}}) }}
+                    </div>
+                    <div class="form-group mt-2">
+                        {{ form_row(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                    </div>
+                {{ form_end(form) }}
+            </div>
+            <p class="text-center">Escape to serenity and make memories that last a lifetime.</p>
+        </div>
+    </div>
+
+    {% if availableRooms is defined %}
+        <h2 class="mt-5">Available Rooms</h2>
+        <div class="row">
+            {% for room in availableRooms %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card room-card">
+                        <img src="{{ asset('img/image-rooms/' ~ room.img) }}" class="card-img-top room-img" alt="{{ room.name }}">
+                        <div class="card-img-overlay d-flex flex-column justify-content-end">
+                            <h5 class="card-title">
+                                <a href="{{ path('app_rooms_show', {'id': room.id}) }}" class="text-decoration-none">{{ room.name }}</a>
+                            </h5>
+                            <p class="card-text"><strong>Price:</strong> ${{ room.price }}</p>
+                            <p class="card-text"><strong>Type:</strong> {{ room.type }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center text-danger">No rooms available for the selected dates.</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

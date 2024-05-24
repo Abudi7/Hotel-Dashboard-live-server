@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>My Bookings</h1>
+    {% if bookings is not empty %}
+    <div class="row">
+        {% for booking in bookings %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="card-img-top" alt="{{ booking.rooms.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ booking.rooms.name }}</h5>
+                    <p class="card-text">Start Date: {{ booking.startdate|date('Y-m-d') }}</p>
+                    <p class="card-text">End Date: {{ booking.enddate|date('Y-m-d') }}</p>
+                    {% set days = booking.enddate.diff(booking.startdate).days %}
+                    <p class="card-text">Price: ${{ booking.rooms.price }} per night</p>
+                    <p class="card-text">Total Price: ${{ booking.rooms.price * days }}</p>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <div class="btn-group" role="group" aria-label="Booking Actions">
+                        <a href="{{ path('app_booking_edit', {'id': booking.id}) }}" class="btn btn-primary">Edit</a>
+                        <form action="{{ path('app_booking_delete', {'id': booking.id}) }}" method="post" style="display: inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ booking.id) }}">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        You have no bookings yet.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
