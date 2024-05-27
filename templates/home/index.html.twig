@@ -3,6 +3,10 @@
 
 {% block body %}
 
+<div class="main-image">
+    <img src="img/main-page/main.png" alt="Slide 1">
+</div>
+
 <div class="main-page">
     <div class="main-left">
         <div class="slider">
@@ -25,8 +29,8 @@
         <div class="booking-header">
             <h1>Book Now</h1>
         </div>
-        <div class="booking-form">
-            {{ form_start(form, {'attr': {'class': 'form-inline'}}) }}
+        <div class="form-group mt-2">
+            {{ form_start(form, {'attr': {'class': 'form-inline', 'action': path('app_available_rooms'), 'method': 'get'}}) }}
                 <div class="form-group mr-2">
                     {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Check-in Date', 'autocomplete': 'off'}}) }}
                 </div>
@@ -40,31 +44,6 @@
         </div>
     </div>
 </div>
-{#
-<div>
-    {% if availableRooms is defined %}
-        <h2 class="mt-5">Available Rooms</h2>
-        <div class="row">
-            {% for room in availableRooms %}
-                <div class="col-md-3 col-sm-6 mb-4">
-                    <div class="card room-card">
-                        <img src="{{ asset('img/image-rooms/' ~ room.img) }}" class="card-img-top room-img" alt="{{ room.name }}">
-                        <div class="card-img-overlay d-flex flex-column justify-content-end">
-                            <h5 class="card-title">
-                                <a href="{{ path('app_rooms_show', {'id': room.id}) }}" class="text-decoration-none">{{ room.name }}</a>
-                            </h5>
-                            <p class="card-text"><strong>Price:</strong> ${{ room.price }}</p>
-                            <p class="card-text"><strong>Type:</strong> {{ room.type }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="col-12">
-                    <p class="text-center text-danger">No rooms available for the selected dates.</p>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-</div>
-#}
+
+
 {% endblock %}

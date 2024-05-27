@@ -8,6 +8,9 @@ parameters:
     profile: '%kernel.project_dir%/public/img/profile'
 
 services:
+    App\Form\BookingType:
+        arguments:
+            $session: '@session'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

@@ -1,0 +1,31 @@
+{# templates/home/available_rooms.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div>
+    <h2 class="mt-5">Available Rooms</h2>
+    {% if availableRooms %}
+        <div class="row">
+            {% for room in availableRooms %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card room-card">
+                        <img src="{{ asset('img/image-rooms/' ~ room.img) }}" class="card-img-top room-img" alt="{{ room.name }}">
+                        <div class="card-img-overlay d-flex flex-column justify-content-end">
+                            <h5 class="card-title">
+                                {{ room.name }}
+                            </h5>
+                            <p class="card-text"><strong>Price:</strong> ${{ room.price }}</p>
+                            <p class="card-text"><strong>Type:</strong> {{ room.type }}</p>
+                            <a href="{{ path('app_booking_new', {'roomId': room.id}) }}?startdate={{ startDate|date('Y-m-d') }}&enddate={{ endDate|date('Y-m-d') }}"" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="col-12">
+            <p class="text-center text-danger">No rooms available for the selected dates.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

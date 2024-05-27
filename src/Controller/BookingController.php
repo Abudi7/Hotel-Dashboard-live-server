@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class BookingController extends AbstractController
 {
@@ -29,15 +30,27 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/new/{roomId}', name: 'app_booking_new')]
-    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, MailerInterface $mailer): Response
+    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, SessionInterface $session): Response
     {
+        // Create a new booking entity
         $booking = new Booking();
+    
+        // Create the booking form
         $form = $this->createForm(BookingType::class, $booking);
+    
+        // Get the start date and end date from the session
+        $startDate = $session->get('startDate');
+        $endDate = $session->get('endDate');
+    
+        // Set the start date and end date values in the form
+        $form->get('startdate')->setData($startDate);
+        $form->get('enddate')->setData($endDate);
+    
+        // Handle the form submission
         $form->handleRequest($request);
 
-        // Fetch available rooms based on selected date range
-        $startDate = $form->get('startdate')->getData();
-        $endDate = $form->get('enddate')->getData();
+
+        
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Get the logged-in user

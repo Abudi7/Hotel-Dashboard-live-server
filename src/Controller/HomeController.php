@@ -10,56 +10,74 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
+        
         // Create the date range form
         $form = $this->createForm(DateRangeType::class);
         
         // Handle the form submission
         $form->handleRequest($request);
-    
-        // Initialize an empty array to hold the available rooms
-        $availableRooms = [];
-    
-        // Get the current date and time
-        $currentDate = new \DateTime();
-    
+
         // Check if the form has been submitted and is valid
         if ($form->isSubmitted() && $form->isValid()) {
             // Get the form data (start date and end date)
             $data = $form->getData();
             $startDate = $data['startdate'];
             $endDate = $data['enddate'];
-    
-            // Query the database to find rooms that are available within the selected date range
-            $availableRooms = $entityManager->getRepository(Rooms::class)->createQueryBuilder('r')
-                ->leftJoin('r.bookings', 'b')
-                ->where('b.id IS NULL OR :endDate < b.startdate OR :startDate > b.enddate')
-                ->setParameter('startDate', $startDate)
-                ->setParameter('endDate', $endDate)
-                ->getQuery()
-                ->getResult();
-        } else {
-            // If the form is not submitted or not valid, show rooms available for the current date
-            $availableRooms = $entityManager->getRepository(Rooms::class)->createQueryBuilder('r')
-                ->leftJoin('r.bookings', 'b')
-                ->where('b.id IS NULL OR :currentDate < b.startdate OR :currentDate > b.enddate')
-                ->setParameter('currentDate', $currentDate)
-                ->getQuery()
-                ->getResult();
+
+            // Store the start date and end date in the session
+            $session->set('startDate', $startDate);
+            $session->set('endDate', $endDate);
+
+            // Redirect to the available rooms page
+            return $this->redirectToRoute('app_available_rooms');
         }
-    
-        // Render the template with the form and available rooms data
+
+        // Render the template with the form
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
             'form' => $form->createView(),
-            'availableRooms' => $availableRooms,
         ]);
     }
+
+    
+    
+    #[Route('/available-rooms', name: 'app_available_rooms')]
+    public function showAvailableRooms(Request $request, SessionInterface $session, EntityManagerInterface $entityManager): Response
+    {
+        
+        $startDate = $session->get('startDate');
+        $endDate = $session->get('endDate');
+    
+       // Set session data
+        $session->set('startDate', $startDate);
+        $session->set('endDate', $endDate);
+
+        // Query the database to find rooms that are available within the selected date range
+        $availableRooms = $entityManager->getRepository(Rooms::class)->createQueryBuilder('r')
+            ->leftJoin('r.bookings', 'b')
+            ->where('b.id IS NULL OR :endDate < b.startdate OR :startDate > b.enddate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+    
+        // Render the template with the available rooms data
+        return $this->render('home/available_rooms.html.twig', [
+            'availableRooms' => $availableRooms,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
+    }
+    
+
     
     
 }
