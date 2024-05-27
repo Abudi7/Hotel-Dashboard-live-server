@@ -1,4 +1,4 @@
-/* Custom styles for the header */
+/* Custom styles for the Header / Footer */
 
 .header {
     background-color: black !important;
@@ -13,6 +13,9 @@
     align-items: center;
     padding-left: 2rem;
     padding-right: 2rem;
+    position: relative;
+    z-index: 1000;
+    /* Ensure header stays on top */
 }
 
 .header .container {
@@ -54,20 +57,25 @@ footer {
 
 .main-page {
     position: relative;
-    padding-top: 100vh;
     display: flex;
-    margin-top: 3rem;
-    margin-bottom: 3rem;
+    margin-top: 100vh;
 }
 
 .main-image {
     position: absolute;
-    top: -150px;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    object-fit: cover;
+    overflow: hidden;
     z-index: -1;
+    /* Ensures the image stays behind other content */
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .main-left {
@@ -77,6 +85,11 @@ footer {
 .main-right {
     width: 50%;
     align-content: center;
+}
+
+.main-right form {
+    display: flex;
+    flex-direction: column;
 }
 
 .slider {

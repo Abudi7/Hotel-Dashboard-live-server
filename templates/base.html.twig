@@ -3,11 +3,7 @@
 <!-- The body content -->
 <body>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                {% block body %}{% endblock %}
-            </div>
-        </div>
+        {% block body %}{% endblock %}
     </div>
 </body>
 {% include 'footer.html.twig' %}
