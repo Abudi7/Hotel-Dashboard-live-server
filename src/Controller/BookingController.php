@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 namespace App\Controller;
 
 use App\Entity\Booking;
@@ -8,7 +7,6 @@ use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use DateTime;
 use DateTimeZone;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BookingController extends AbstractController
 {
@@ -35,39 +34,39 @@ class BookingController extends AbstractController
         $booking = new Booking();
         $form = $this->createForm(BookingType::class, $booking);
         $form->handleRequest($request);
-    
+
         // Fetch available rooms based on selected date range
         $startDate = $form->get('startdate')->getData();
         $endDate = $form->get('enddate')->getData();
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             // Get the logged-in user
             $user = $this->getUser();
-    
+
             if ($user === null) {
                 return $this->redirectToRoute('app_login');
             }
-    
+
             $customerName = $user->getUserIdentifier();
             $booking->setCustomername($customerName);
-    
+
             $now = new DateTime('now', new DateTimeZone(date_default_timezone_get()));
             $booking->setCreatedat($now);
-    
+
             $room = $this->entityManager->getRepository(Rooms::class)->find($roomId);
             $booking->setRooms($room);
-    
+
             $address = $booking->getAddress();
             $this->entityManager->persist($address);
             $this->entityManager->persist($booking);
             $this->entityManager->flush();
-    
+
             // Calculate number of nights
             $numberOfNights = $booking->getStartdate()->diff($booking->getEnddate())->days;
-    
+
             // Calculate total price
             $totalPrice = $numberOfNights * $room->getPrice();
-    
+
             // Construct email content
             $emailContent = "
                 <p>Dear $customerName,</p>
@@ -81,21 +80,20 @@ class BookingController extends AbstractController
                 <p>If you have any questions or need further assistance, feel free to contact us.</p>
                 <p>Best regards,<br>Hotel Dashboard Team</p>
             ";
-    
+
             // Send email with invoice and thank you message
             $email = (new Email())
                 ->from('info-Alshalal-Hiess@hotel-dashboard.at')
                 ->to($user->getEmail())
                 ->subject('Booking Confirmation and Invoice')
                 ->html($emailContent);
-    
+
             $mailer->send($email);
-    
+
             // Return a response if needed
-            //return new Response('Email sent successfully!');
             return $this->redirectToRoute('app_booking_success');
         }
-    
+
         // Check if start and end dates are not null before fetching available rooms
         if ($startDate !== null && $endDate !== null) {
             // Retrieve available rooms by date range from the repository
@@ -103,16 +101,12 @@ class BookingController extends AbstractController
         } else {
             $availableRooms = [];
         }
-    
+
         return $this->render('booking/new.html.twig', [
             'form' => $form->createView(),
             'availableRooms' => $availableRooms,
         ]);
     }
-    
-
-
-
 
     #[Route('/booking/success', name: 'app_booking_success')]
     public function success(BookingRepository $bookingRepository): Response
@@ -124,6 +118,8 @@ class BookingController extends AbstractController
         if ($latestBooking === null) {
             throw $this->createNotFoundException('No booking found.');
         }
+        // Get the logged-in user
+        $user = $this->security->getUser();
 
         // Calculate the price per night
         $room = $latestBooking->getRooms();
@@ -134,13 +130,33 @@ class BookingController extends AbstractController
         // Calculate total price paid
         $totalPrice = $roomPrice * $numberOfNights;
 
+        // Generate invoice number
+        $invoiceNumber = 'Hotel-Dashboard ' . mt_rand(1000, 9999);
+
         // Pass the necessary data to the template
         return $this->render('booking/success.html.twig', [
+            'invoiceNumber' => $invoiceNumber,
+            'username' => $user->getName() . ' ' . $user->getSurname(),
             'booking' => $latestBooking,
             'pricePerNight' => $pricePerNight,
             'numberOfNights' => $numberOfNights,
             'totalPrice' => $totalPrice,
         ]);
+    }
+
+
+
+    #[Route('/booking/check-availability', name: 'app_booking_check_availability', methods: ['POST'])]
+    public function checkAvailability(Request $request, BookingRepository $bookingRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $startDate = new \DateTime($data['startdate']);
+        $endDate = new \DateTime($data['enddate']);
+
+        // Retrieve available rooms by date range from the repository
+        $availableRooms = $bookingRepository->findAvailableRoomsByDateRange($startDate, $endDate);
+
+        return new JsonResponse(['availableRooms' => $availableRooms]);
     }
 
     #[Route('/booking', name: 'app_booking')]
@@ -183,4 +199,3 @@ class BookingController extends AbstractController
         return $this->redirectToRoute('app_booking');
     }
 }
-

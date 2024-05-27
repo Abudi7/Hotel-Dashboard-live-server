@@ -8,29 +8,58 @@
         <h4 class="alert-heading">Booking Successful!</h4>
         <p>Your booking has been successfully submitted.</p>
         <hr>
-        <p class="mb-0">Thank you for choosing our service.</p>
+        <p class="mb-0">Thank you for choosing our service, {{ username }}.</p>
     </div>
 
     <div class="invoice-details mt-4">
-        <h5>Invoice Details:</h5>
-        <table class="table">
-            <tr>
-                <td><strong>Customer Name:</strong></td>
-                <td>{{ booking.getCustomername() }}</td>
-            </tr>
-            <tr>
-                <td><strong>Number of Nights:</strong></td>
-                <td>{{ numberOfNights }}</td>
-            </tr>
-            <tr>
-                <td><strong>Price per Night:</strong></td>
-                <td>${{ pricePerNight }}</td>
-            </tr>
-            <tr>
-                <td><strong>Total Price Paid:</strong></td>
-                <td>${{ totalPrice }}</td>
-            </tr>
-        </table>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Invoice Details</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <td><strong>Invoice Number:</strong></td>
+                        <td>{{ invoiceNumber }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Email:</strong></td>
+                        <td>{{ booking.getCustomername() }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Name:</strong></td>
+                        <td>{{ username }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number of Nights:</strong></td>
+                        <td>{{ numberOfNights }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Price per Night:</strong></td>
+                        <td>${{ pricePerNight }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Price Paid:</strong></td>
+                        <td>${{ totalPrice }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Room Image:</strong></td>
+                        <td>
+                            <div class="border p-2 rounded">
+                                <img src="{{ asset('img/image-rooms/' ~ booking.getRooms().getImg()) }}" alt="Room Image" class="img-fluid" style="max-width: 200px;">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ path('app_home') }}" class="btn btn-primary mr-2"><i class="fas fa-home"></i> Return to Home</a>
+        <button onclick="window.print()" class="btn btn-secondary"><i class="fas fa-print"></i> Print</button>
+        {# <button id="download-pdf-btn" class="btn btn-primary"><i class="fas fa-download"></i> Download as PDF</button> #}
     </div>
 </div>
+
 {% endblock %}

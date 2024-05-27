@@ -39,7 +39,11 @@
                                 {# <label class="form-check-label" for="{{ registrationForm.agreeTerms.vars.id }}">Agree to terms</label> #}
                             </div>
                             {{ form_row(registrationForm._token) }}
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back();">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
                             <button type="submit" class="btn btn-primary">Register</button>
+
                         </form>
                     </div>
                 </div>

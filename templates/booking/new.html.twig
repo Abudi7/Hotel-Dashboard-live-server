@@ -29,47 +29,148 @@
                 <div class="col-md-6">
                     <h3>Booking Details</h3>
                     <div class="form-group">
-                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Start Date'}}) }}
+                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Start Date', 'id': 'startdate'}}) }}
                     </div>
                     <div class="form-group">
-                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'End Date'}}) }}
+                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'End Date', 'id': 'enddate'}}) }}
                     </div>
                     <div class="form-group">
                         {{ form_row(form.customername, {'attr': {'class': 'form-control', 'placeholder': 'Customer Name'}}) }}
                     </div>
                     <div class="form-group">
-                        {{ form_row(form.rooms, {'attr': {'class': 'form-control', 'placeholder': 'Room'}}) }}
+                        {{ form_row(form.rooms, {'attr': {'class': 'form-control', 'placeholder': 'Room', 'id': 'rooms'}}) }}
                     </div>
                 </div>
             </div>
+
+            <!-- Payment Method Section -->
             <div class="row mt-4">
-                <div class="col-12 text-center">
+                <div class="col-12">
+                    <h3>Payment Method</h3>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="paymentStripe" value="stripe" checked>
+                        <label class="form-check-label" for="paymentStripe">
+                            Pay with Stripe
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="paymentPaypal" value="paypal">
+                        <label class="form-check-label" for="paymentPaypal">
+                            Pay with PayPal
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stripe Payment Section -->
+            <div id="stripePayment" class="payment-method mt-3">
+                <h4>Stripe Payment</h4>
+                <p>Enter your credit card information below.</p>
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="cardExpiry">Expiry Date</label>
+                        <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cardCVC">CVC</label>
+                        <input type="text" class="form-control" id="cardCVC" placeholder="CVC">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PayPal Payment Section -->
+            <div id="paypalPayment" class="payment-method mt-3" style="display: none;">
+                <h4>PayPal Payment</h4>
+                <p>You will be redirected to PayPal to complete your payment.</p>
+                <a href="https://www.paypal.com/your_paypal_payment_link" class="btn btn-primary">Pay with PayPal</a>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back();">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div class="col-6 text-left">
                     {{ form_row(form.submit, {'label': 'Book Now', 'attr': {'class': 'btn btn-primary'}}) }}
                 </div>
             </div>
             {{ form_end(form) }}
             
-            {% if availableRooms is not empty %}
-            <h2 class="mt-5">Available Rooms</h2>
-            <div class="row">
-                {% for room in availableRooms %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ room.name }}</h5>
-                            <p class="card-text">Price: ${{ room.price }}</p>
-                            <p class="card-text">Type: {{ room.type }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+            <div id="available-rooms-container" class="mt-5">
+                <!-- Available rooms will be displayed here -->
             </div>
-            {% else %}
-            <div class="col-12">
-                <p class="text-center text-danger">No rooms available for the selected dates.</p>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+    const stripePayment = document.getElementById('stripePayment');
+    const paypalPayment = document.getElementById('paypalPayment');
+
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            if (this.value === 'stripe') {
+                stripePayment.style.display = 'block';
+                paypalPayment.style.display = 'none';
+            } else if (this.value === 'paypal') {
+                stripePayment.style.display = 'none';
+                paypalPayment.style.display = 'block';
+            }
+        });
+    });
+
+    const startDateInput = document.getElementById('startdate');
+    const endDateInput = document.getElementById('enddate');
+
+    function fetchAvailableRooms() {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        if (startDate && endDate) {
+            fetch('{{ path('app_booking_check_availability') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    startdate: startDate,
+                    enddate: endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('available-rooms-container');
+                container.innerHTML = '';
+                if (data.availableRooms.length > 0) {
+                    data.availableRooms.forEach(room => {
+                        const roomDiv = document.createElement('div');
+                        roomDiv.className = 'card mb-3';
+                        roomDiv.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">${room.name}</h5>
+                                <p class="card-text">Price: $${room.price}</p>
+                                <p class="card-text">Type: ${room.type}</p>
+                            </div>
+                        `;
+                        container.appendChild(roomDiv);
+                    });
+                } else {
+                    container.innerHTML = '<p class="text-danger text-center">No rooms available for the selected dates.</p>';
+                }
+            });
+        }
+    }
+
+    startDateInput.addEventListener('change', fetchAvailableRooms);
+    endDateInput.addEventListener('change', fetchAvailableRooms);
+});
+</script>
 {% endblock %}
