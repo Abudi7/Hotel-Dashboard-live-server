@@ -30,7 +30,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/new/{roomId}', name: 'app_booking_new')]
-    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, SessionInterface $session): Response
+    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, SessionInterface $session, MailerInterface $mailer): Response
     {
         // Create a new booking entity
         $booking = new Booking();
@@ -100,7 +100,7 @@ class BookingController extends AbstractController
                 ->to($user->getEmail())
                 ->subject('Booking Confirmation and Invoice')
                 ->html($emailContent);
-
+            //dump($email);die;
             $mailer->send($email);
 
             // Return a response if needed

@@ -38,12 +38,12 @@
               <a class="nav-link" href="{{ path('app_rooms_index') }}">
                   <i class="fas fa-bed"></i> Rooms
               </a>
-          </li>
+          </li>{% if is_granted('IS_AUTHENTICATED_FULLY') %}
           <li class="nav-item">
               <a class="nav-link" href="{{ path('app_booking') }}">
                   <i class="fas fa-calendar-check"></i> Bookings
               </a>
-          </li>
+          </li>{% endif %}
           {% if is_granted('ROLE_ADMIN') %}
           <li class="nav-item">
               <a class="nav-link" href="{{ path('app_customers') }}">
