@@ -1,3 +1,27 @@
+# framework:
+#     mailer:
+#         envelope:
+#             sender: 'noreply@mail.hotel-dashboard.at'  # A valid email address
+#         headers:
+#             From: 'Hotel Dashboard <noreply@mail.hotel-dashboard.at>'  # A valid email address with a display name
+#         dsn: '%env(MAILER_DSN)%'
+#         # dsn: 'smtp://localhost'
+
+
+# framework:
+#     mailer:
+#         envelope:
+#             sender: 'info@mail.hotel-dashboard.at'  # Use 'info' as the local part
+#         headers:
+#             From: 'Hotel Dashboard <info@mail.hotel-dashboard.at>'  # Use 'info' as the local part
+#         dsn: '%env(MAILER_DSN)%'
+#         # dsn: 'smtp://localhost'
+
+
 framework:
     mailer:
+        envelope:
+            sender: 'alshalalhiess@gmail.com'  # Your Gmail address
+        headers:
+            From: 'Hotel Dashboard <alshalalhiess@gmail.com>'  # Your Gmail address with a display name
         dsn: '%env(MAILER_DSN)%'

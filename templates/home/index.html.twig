@@ -7,6 +7,12 @@
     <img src="img/main-page/main.png" alt="Slide 1">
 </div>
 
+<div class="main-page-header-content">
+    <h2>Welcome to</h1>
+    <h1>Hotel Dashboard</h1>
+    <h2>Your Booking Platform</h1>
+</div> 
+
 <div class="main-page">
     <div class="main-left">
         <div class="slider">
@@ -29,19 +35,31 @@
         <div class="booking-header">
             <h1>Book Now</h1>
         </div>
-        <div class="form-group mt-2">
-            {{ form_start(form, {'attr': {'class': 'form-inline', 'action': path('app_available_rooms'), 'method': 'get'}}) }}
-                <div class="form-group mr-2">
-                    {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Check-in Date', 'autocomplete': 'off'}}) }}
+        
+        <div class="booking-form form-group mt-2">
+            {{ form_start(form, {'attr': {'class': 'form-inline justify-content-center', 'action': path('app_available_rooms'), 'method': 'get'}}) }}
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="form-group mr-2">
+                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Check-in Date', 'autocomplete': 'off'}}) }}
+                    </div>
                 </div>
-                <div class="form-group mr-2">
-                    {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'Check-out Date', 'autocomplete': 'off'}}) }}
+                <div class="col">
+                    <div class="form-group mr-2">
+                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'Check-out Date', 'autocomplete': 'off'}}) }}
+                    </div>
                 </div>
-                <div class="form-group mt-2">
-                    {{ form_row(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group mt-2">
+                        {{ form_row(form.submit, {'attr': {'class': 'btn btn-purple btn-block'}}) }}
+                    </div>
                 </div>
+            </div>
             {{ form_end(form) }}
         </div>
+
     </div>
 </div>
 
