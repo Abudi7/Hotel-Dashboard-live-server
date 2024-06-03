@@ -96,7 +96,7 @@ class BookingController extends AbstractController
 
             // Send email with invoice and thank you message
             $email = (new Email())
-                ->from('info-Alshalal-Hiess@hotel-dashboard.at')
+                ->from('info@hotel-dashboard.at')
                 ->to($user->getEmail())
                 ->subject('Booking Confirmation and Invoice')
                 ->html($emailContent);
