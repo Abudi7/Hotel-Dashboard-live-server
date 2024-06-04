@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 class MailController extends AbstractController
 {
     /**
-     * @Route("/send-email", name="send_email", methods={"POST"})
+     * @Route("/send-email", name="send_email", methods={"GET", "POST"})
      */
     #[Route('/send-email', name: 'send_email', methods: ['GET', 'POST'])]
     public function sendEmail(Request $request, MailerInterface $mailer)

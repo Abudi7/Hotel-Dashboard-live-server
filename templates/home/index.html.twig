@@ -38,15 +38,22 @@
         
         <div class="booking-form form-group mt-2">
             {{ form_start(form, {'attr': {'class': 'form-inline justify-content-center', 'action': path('app_available_rooms'), 'method': 'get'}}) }}
-            <div class="row align-items-center">
-                <div class="col">
+            <div class="row align-items-center border-dark rounded form-row">
+                <div class="col col1">
                     <div class="form-group mr-2">
-                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'placeholder': 'Check-in Date', 'autocomplete': 'off'}}) }}
+                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
                     </div>
                 </div>
                 <div class="col">
-                    <div class="form-group mr-2">
-                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'placeholder': 'Check-out Date', 'autocomplete': 'off'}}) }}
+                    <div class="form-group ml-2">
+                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center border-dark rounded form-row2">
+                <div class="col">
+                    <div class="form-group">
+                        test
                     </div>
                 </div>
             </div>

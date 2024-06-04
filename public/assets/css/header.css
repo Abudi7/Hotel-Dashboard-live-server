@@ -15,7 +15,6 @@
     padding-right: 2rem;
     position: relative;
     z-index: 1000;
-    /* Ensure header stays on top */
 }
 
 .header .container {
@@ -85,7 +84,6 @@ footer {
     height: 100vh;
     overflow: hidden;
     z-index: -1;
-    /* Ensures the image stays behind other content */
     filter: brightness(0.5);
 }
 
@@ -172,23 +170,46 @@ footer {
 /* Booking Form */
 
 .booking-form {
-    background-color: whitesmoke;
+    background-color: white;
+    border: 0.1px solid gray;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
     display: flex;
-    flex-direction: column; /* Neue Zeile hinzugefügt */
-    margin-left: 6rem!important;
-    margin-right: 6rem!important;
+    flex-direction: column;
+    margin-left: 6rem !important;
+    margin-right: 6rem !important;
+}
+
+.booking-form .col1 {
+    border-right: 0.1px solid gray;
+}
+
+.booking-form .form-row {
+    border: 0.1px solid gray;
+    padding: 10px;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.booking-form .form-row2 {
+    border: 0.1px solid gray;
+    padding: 10px;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
 }
 
 .booking-form .form-control {
-    border-radius: 4px;
+    border-radius: 10px;
     border: 1px solid #ced4da;
     padding: 10px;
     font-size: 16px;
-    margin-bottom: 10px; /* Abstand zwischen den Eingabefeldern hinzugefügt */
+    margin-bottom: 10px;
 }
 
 .booking-form .btn-purple {
@@ -196,13 +217,13 @@ footer {
     border-color: #800080;
     padding: 10px 20px;
     font-size: 16px;
-    border-radius: 8px;
+    border-radius: 10px;
     color: white;
-    width: 100%; /* Breite auf 100% gesetzt */
-    margin-top: 10px; /* Abstand zum vorherigen Element hinzugefügt */
-    transition: background-color 0.3s; /* Übergangseffekt hinzugefügt */
+    width: 100%;
+    margin-top: 2rem;
+    transition: background-color 0.3s;
 }
 
 .booking-form .btn-purple:hover {
-    background-color: #a700a7; 
+    background-color: #a700a7;
 }

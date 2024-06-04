@@ -16,7 +16,7 @@ class DateRangeType extends AbstractType
         $builder
             ->add('startdate', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Start Date',
+                'label' => 'CHECK-IN',
                 'attr' => [
                     'min' => $today,
                     'class' => 'form-control', // Bootstrap form-control class
@@ -26,7 +26,7 @@ class DateRangeType extends AbstractType
             ])
             ->add('enddate', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'End Date',
+                'label' => 'CHECK-OUT',
                 'attr' => [
                     'min' => $today,
                     'class' => 'form-control', // Bootstrap form-control class
