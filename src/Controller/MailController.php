@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
@@ -20,8 +21,8 @@ class MailController extends AbstractController
         // Check if the request is a POST request
         if ($request->isMethod('POST')) {
             // Create an Email object
-            $email = (new Email())
-                ->from('noreply@hotel-dashboard.at')
+            $email = (new TemplatedEmail())
+                ->from('info@hotel-dashboard.at')
                 ->to('casper.king14@gmail.com')
                 ->subject('A Test Subject!')
                 ->text('The plain text version of the message.')
@@ -41,6 +42,7 @@ class MailController extends AbstractController
             try {
                 // Send email
                 $mailer->send($email);
+                dd($mailer->send($email));
 
                 // Display custom successful message
                 return $this->json(['message' => 'Email sent successfully!']);

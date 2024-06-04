@@ -1,10 +1,15 @@
 framework:
     mailer:
-        envelope:
-            sender: 'info@hotel-dashboard.at'  # A valid email address
-        headers:
-            From: 'Hotel Dashboard <info@hotel-dashboard.at>'  # A valid email address with a display name
         dsn: '%env(MAILER_DSN)%'
+
+
+# framework:
+#     mailer:
+#         envelope:
+#             sender: 'info@hotel-dashboard.at'  # A valid email address
+#         headers:
+#             From: 'Hotel Dashboard <info@hotel-dashboard.at>'  # A valid email address with a display name
+#         dsn: '%env(MAILER_DSN)%'
         # dsn: 'smtp://localhost'
 
 
