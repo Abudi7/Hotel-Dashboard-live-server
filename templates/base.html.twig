@@ -2,8 +2,14 @@
 
 <!-- The body content -->
 <body>
-    <div class="container-fluid">
-        {% block body %}{% endblock %}
-    </div>
+    {% if app.request.attributes.get('_route') != 'app_home' %}
+        <div class="container-fluid">
+    {% endif %}
+    
+    {% block body %}{% endblock %}
+    
+    {% if app.request.attributes.get('_route') != 'app_home' %}
+        </div><!-- .container-fluid -->
+    {% endif %}
 </body>
 {% include 'footer.html.twig' %}
