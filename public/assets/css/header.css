@@ -2,8 +2,6 @@
 
 .header {
     background-color: black !important;
-    margin-left: 2rem;
-    margin-right: 2rem;
     margin-top: 2rem;
     border-radius: 2rem;
     box-shadow: 2px 2px 22px grey;
@@ -13,8 +11,17 @@
     align-items: center;
     padding-left: 2rem;
     padding-right: 2rem;
-    position: relative;
-    z-index: 1000;
+    z-index: 999;
+}
+
+.navbar {
+    position: absolute !important;
+    width: 100%;
+    max-width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
 }
 
 .header .container {
@@ -26,11 +33,16 @@
 }
 
 .main-page-header-content {
-    position: relative;
+    position: absolute;
     z-index: 99;
-    margin-top: 30vh;
+    margin-top: 50vh;
     margin-left: 5rem;
     color: white;
+    top: 0;
+}
+
+.header-text {
+    justify-content: end;
 }
 
 .main-page-header-content h1 {
@@ -39,10 +51,6 @@
 
 .main-page-header-content h2 {
     font-size: 2rem;
-}
-
-.header-text {
-    justify-content: end;
 }
 
 .header-text li {
@@ -73,11 +81,12 @@ footer {
 .main-page {
     position: relative;
     display: flex;
-    margin-top: 50vh;
+    margin-top: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .main-image {
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -91,6 +100,10 @@ footer {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.container-fluid {
+    padding: 0 !important;
 }
 
 .main-left {

@@ -20,16 +20,20 @@ class MailController extends AbstractController
     {
         // Check if the request is a POST request
         if ($request->isMethod('POST')) {
+            // Use a default recipient email for testing purposes
+            $recipientEmail = 'casper.king14@gmail.com'; // Replace with your default test email
+
             // Create an Email object
             $email = (new TemplatedEmail())
                 ->from('info@hotel-dashboard.at')
-                ->to('casper.king14@gmail.com')
-                ->subject('A Test Subject!')
-                ->text('The plain text version of the message.')
+                ->to($recipientEmail)
+                ->subject('Test Email Subject!')
+                ->text('This is the plain text version of the test email message.')
                 ->html('
                     <h1 style="color: #fff300; background-color: #0073ff; width: 500px; padding: 16px 0; text-align: center; border-radius: 50px;">
-                    The HTML version of the message.
+                    This is a test email.
                     </h1>
+                    <p>This email is sent for testing purposes.</p>
                     <img src="cid:Image_Name_1" style="width: 600px; border-radius: 50px">
                     <br>
                     <img src="cid:Image_Name_2" style="width: 600px; border-radius: 50px">
@@ -37,19 +41,8 @@ class MailController extends AbstractController
                     The End!
                     </h1>
                 ');
-
-            // Sending email with status
-            try {
-                // Send email
                 $mailer->send($email);
-                dd($mailer->send($email));
-
-                // Display custom successful message
-                return $this->json(['message' => 'Email sent successfully!']);
-            } catch (TransportExceptionInterface $e) {
-                // Display custom error message
-                return $this->json(['error' => 'Error sending email!']);
-            }
+                return $this->render('send_email.html.twig');
         } else {
             // Handle GET request (optional)
             return $this->render('send_email.html.twig');

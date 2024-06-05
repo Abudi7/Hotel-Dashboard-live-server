@@ -16,7 +16,7 @@
                             </h5>
                             <p class="card-text"><strong>Price:</strong> ${{ room.price }}</p>
                             <p class="card-text"><strong>Type:</strong> {{ room.type }}</p>
-                            {% if is_granted('ROLE_ADMIN') and is_granted('ROLE_USER') %}
+                            {% if is_granted('ROLE_USER') %}
                                 <a href="{{ path('app_booking_new', {'roomId': room.id}) }}?startdate={{ startDate|date('Y-m-d') }}&enddate={{ endDate|date('Y-m-d') }}" class="btn btn-primary">Book Now</a>
                             {% else %}
                                 <a href="{{ path('app_login') }}" class="btn btn-primary">Book Now</a>
