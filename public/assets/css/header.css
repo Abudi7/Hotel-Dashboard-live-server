@@ -58,10 +58,6 @@
     padding: 1rem;
 }
 
-.container-fluid {
-    margin-bottom: 10rem;
-}
-
 footer {
     background-color: black !important;
     bottom: 0;
@@ -102,6 +98,7 @@ footer {
 .container-fluid {
     padding: 0 !important;
     margin-top: 20vh;
+    margin-bottom: 10rem;
 }
 
 .main-left {

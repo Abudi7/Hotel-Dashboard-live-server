@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Contact Us</h1>
+                        
+                        {% if app.flashes('success') %}
+                            <div class="alert alert-success" role="alert">
+                                {{ app.flashes('success')|first }}
+                            </div>
+                        {% endif %}
+
+                        {% if app.flashes('error') %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for message in app.flashes('error') %}
+                                    {{ message }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" name="name" id="name" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Your Email</label>
+                                <input type="email" name="email" id="email" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea name="message" id="message" class="form-control" rows="5" required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">Send Message <i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
