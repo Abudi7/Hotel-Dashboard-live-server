@@ -5,6 +5,7 @@ use App\Entity\Booking;
 use App\Entity\Rooms;
 use App\Form\BookingType;
 use App\Repository\BookingRepository;
+use App\Repository\UserRepository;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +31,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/new/{roomId}', name: 'app_booking_new')]
-    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, SessionInterface $session, MailerInterface $mailer): Response
+    public function new(Request $request, int $roomId, BookingRepository $bookingRepository, SessionInterface $session, MailerInterface $mailer,UserRepository $userRepository): Response
     {
         // Create a new booking entity
         $booking = new Booking();
@@ -60,14 +61,19 @@ class BookingController extends AbstractController
                 return $this->redirectToRoute('app_login');
             }
 
-            $customerName = $user->getUserIdentifier();
-            $booking->setCustomername($customerName);
+            $customerName = $userRepository->findByEmail($user->getUserIdentifier());
+            
+            $booking->setCustomername($customerName->getEmail());
+
+            $username = $customerName->getName() . $customerName->getSurname();
 
             $now = new DateTime('now', new DateTimeZone(date_default_timezone_get()));
             $booking->setCreatedat($now);
 
             $room = $this->entityManager->getRepository(Rooms::class)->find($roomId);
             $booking->setRooms($room);
+            $invoiceNumber = 'Hotel-Dashboard ' . mt_rand(1000, 9999);
+            $booking->setInvoicenumber($invoiceNumber);
 
             $address = $booking->getAddress();
             $this->entityManager->persist($address);
@@ -80,19 +86,24 @@ class BookingController extends AbstractController
             // Calculate total price
             $totalPrice = $numberOfNights * $room->getPrice();
 
-            // Construct email content
+            // <!-- Construct email content -->
             $emailContent = "
-                <p>Dear $customerName,</p>
-                <p>Thank you for booking with us!</p>
-                <p>Here are your booking details:</p>
-                <ul>
-                    <li>Number of Nights: $numberOfNights</li>
-                    <li>Price per Night: $" . number_format($room->getPrice(), 2) . "</li>
-                    <li>Total Price Paid: $" . number_format($totalPrice, 2) . "</li>
-                </ul>
-                <p>If you have any questions or need further assistance, feel free to contact us.</p>
-                <p>Best regards,<br>Hotel Dashboard Team</p>
+                <div style='font-family: Arial, sans-serif;'>
+                    <p style='color: #333; font-size: 16px;'>Dear $username,</p>
+                    <p style='color: #333; font-size: 16px;'>Thank you for booking with us!</p>
+                    <div style='background-color: #f5f5f5; padding: 10px; border-radius: 5px;'>
+                        <p style='color: #333; font-size: 16px;'>Here are your booking details:</p>
+                        <ul style='list-style-type: none; padding-left: 0;'>
+                            <li style='color: #333; font-size: 16px;'>Number of Nights: $numberOfNights</li>
+                            <li style='color: #333; font-size: 16px;'>Price per Night: $" . number_format($room->getPrice(), 2) . "</li>
+                            <li style='color: #333; font-size: 16px;'>Total Price Paid: $" . number_format($totalPrice, 2) . "</li>
+                        </ul>
+                    </div>
+                    <p style='color: #333; font-size: 16px;'>If you have any questions or need further assistance, feel free to contact us.</p>
+                    <p style='color: #333; font-size: 16px;'>Best regards,<br>Hotel Dashboard Team</p>
+                </div>
             ";
+
 
             // Send email with invoice and thank you message
             $email = (new Email())
@@ -144,7 +155,7 @@ class BookingController extends AbstractController
         $totalPrice = $roomPrice * $numberOfNights;
 
         // Generate invoice number
-        $invoiceNumber = 'Hotel-Dashboard ' . mt_rand(1000, 9999);
+        $invoiceNumber = $latestBooking->getInvoicenumber();
 
         // Pass the necessary data to the template
         return $this->render('booking/success.html.twig', [

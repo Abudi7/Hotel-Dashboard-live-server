@@ -1,13 +1,26 @@
 {# templates/send_email.html.twig #}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Send Email</title>
-</head>
-<body>
-    <h1>Send Email</h1>
-    <form action="{{ path('send_email') }}" method="post">
-        <button type="submit">Send Email</button>
+{% extends 'base.html.twig' %}
+
+{% block title %}Send Email{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Send Test Email</h1>
+    
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    
+    <form method="post" action="{{ path('send_email') }}">
+        <button type="submit" class="btn btn-primary">Send Test Email</button>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

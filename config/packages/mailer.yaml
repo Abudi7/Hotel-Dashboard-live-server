@@ -1,7 +1,13 @@
+# config/packages/dev/mailer.yaml
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
-
+        message_bus: false
+        envelope:
+            sender: '%env(MAILER_FROM)%'
+        headers:
+            From: 'Hotel Dashboard <info@hotel-dashboard.at>'
+   
 
 # framework:
 #     mailer:

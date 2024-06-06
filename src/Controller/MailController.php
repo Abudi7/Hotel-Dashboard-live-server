@@ -1,14 +1,14 @@
 <?php
-// src/Controller/MailController.php
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Psr\Log\LoggerInterface;
 
 class MailController extends AbstractController
 {
@@ -16,36 +16,49 @@ class MailController extends AbstractController
      * @Route("/send-email", name="send_email", methods={"GET", "POST"})
      */
     #[Route('/send-email', name: 'send_email', methods: ['GET', 'POST'])]
-    public function sendEmail(Request $request, MailerInterface $mailer)
+    public function sendEmail(Request $request, MailerInterface $mailer, LoggerInterface $logger)
     {
-        // Check if the request is a POST request
-        if ($request->isMethod('POST')) {
-            // Use a default recipient email for testing purposes
-            $recipientEmail = 'casper.king14@gmail.com'; // Replace with your default test email
+        // Define variables for "from" and "to" headers
+        $from = 'info@hotel-dashboard.at';
+        $to = 'casper.king14@gmail.com';
 
-            // Create an Email object
-            $email = (new TemplatedEmail())
-                ->from('info@hotel-dashboard.at')
-                ->to($recipientEmail)
-                ->subject('Test Email Subject!')
-                ->text('This is the plain text version of the test email message.')
-                ->html('
-                    <h1 style="color: #fff300; background-color: #0073ff; width: 500px; padding: 16px 0; text-align: center; border-radius: 50px;">
-                    This is a test email.
-                    </h1>
-                    <p>This email is sent for testing purposes.</p>
-                    <img src="cid:Image_Name_1" style="width: 600px; border-radius: 50px">
-                    <br>
-                    <img src="cid:Image_Name_2" style="width: 600px; border-radius: 50px">
-                    <h1 style="color: #ff0000; background-color: #5bff9c; width: 500px; padding: 16px 0; text-align: center; border-radius: 50px;">
-                    The End!
-                    </h1>
-                ');
+        // Define the email subject
+        $subject = 'Test Email';
+
+        // Define the email message body
+        $message = 'This is a test email message.';
+
+        if ($request->isMethod('POST')) {
+            $email = (new Email())
+                ->from($from) // Use the $from variable
+                ->to($to) // Use the $to variable
+                ->subject($subject) // Use the $subject variable
+                ->text($message); // Use the $message variable for the email body
+
+            try {
+                // Try sending the email using Symfony Mailer
                 $mailer->send($email);
-                return $this->render('send_email.html.twig');
-        } else {
-            // Handle GET request (optional)
-            return $this->render('send_email.html.twig');
+
+                // Log success
+                $logger->info('Email sent successfully.');
+
+                $this->addFlash('success', 'Email sent successfully.');
+            } catch (TransportExceptionInterface $e) {
+                // Log failure
+                $logger->error('Failed to send email: ' . $e->getMessage());
+
+                $this->addFlash('error', 'Failed to send email.');
+            } catch (\Exception $e) {
+                // Log any other exception
+                $logger->error('An unexpected error occurred: ' . $e->getMessage());
+
+                $this->addFlash('error', 'An unexpected error occurred.');
+            }
         }
+
+        // Log: Rendering the form
+        $logger->debug('Rendering send_email form.');
+
+        return $this->render('send_email.html.twig');
     }
 }

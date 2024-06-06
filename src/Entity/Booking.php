@@ -43,6 +43,9 @@ class Booking
      */
     private $pricePerNight;
 
+    #[ORM\Column(length: 255)]
+    private ?string $invoicenumber = null;
+
     public function __construct()
     {
         
@@ -151,6 +154,18 @@ class Booking
         $interval = $this->startdate->diff($this->enddate);
 
         return $interval->days;
+    }
+
+    public function getInvoicenumber(): ?string
+    {
+        return $this->invoicenumber;
+    }
+
+    public function setInvoicenumber(string $invoicenumber): static
+    {
+        $this->invoicenumber = $invoicenumber;
+
+        return $this;
     }
     
 
