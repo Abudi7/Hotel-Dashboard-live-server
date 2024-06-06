@@ -173,8 +173,8 @@ footer {
 .booking-form form {
     display: flex;
     flex-direction: column;
-    margin-left: 20%;
-    margin-right: 20%;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
 
@@ -200,19 +200,7 @@ footer {
 .booking-form .form-row {
     border: 0.1px solid gray;
     padding: 10px;
-    border-top-left-radius: 10px !important;
-    border-top-right-radius: 10px !important;
-    border-bottom-left-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
-}
-
-.booking-form .form-row2 {
-    border: 0.1px solid gray;
-    padding: 10px;
-    border-top-left-radius: 0px !important;
-    border-top-right-radius: 0px !important;
-    border-bottom-left-radius: 10px !important;
-    border-bottom-right-radius: 10px !important;
+    border-radius: 10px !important;
 }
 
 .booking-form .form-control {
