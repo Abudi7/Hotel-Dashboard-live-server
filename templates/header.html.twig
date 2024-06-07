@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
   <link rel="stylesheet" href="{{ asset('assets/css/header.css') }}">
   <link rel="stylesheet" href="{{ asset('assets/css/available-rooms.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/rooms.css') }}">
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -70,10 +71,17 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_rooms_index') }}">
+                <a class="nav-link" href="{{ path('app_rooms_users') }}">
                     <i class="fas fa-bed"></i> Rooms
                 </a>
             </li>
+            {% if is_granted('ROLE_ADMIN') and is_granted('ROLE_USER') %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_rooms_index') }}">
+                    <i class="fas fa-bed"></i> Edit Rooms
+                </a>
+            </li>
+            {% endif %}
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('contact') }}">
                     <i class="fas fa-envelope"></i> Contact

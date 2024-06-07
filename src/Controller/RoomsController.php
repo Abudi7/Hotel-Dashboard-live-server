@@ -27,6 +27,14 @@ class RoomsController extends AbstractController
             'rooms' => $roomsRepository->findAll(),
         ]);
     }
+    #[Route('/rooms/users', name: 'app_rooms_users', methods: ['GET'])]
+    public function roomUser(RoomsRepository $roomsRepository): Response
+    {
+        #$this->denyAccessUnlessGranted('ROLE_User');
+        return $this->render('rooms/room_index_user.html.twig', [
+            'rooms' => $roomsRepository->findAll(),
+        ]);
+    }
 
     #[Route('rooms/new', name: 'app_rooms_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
