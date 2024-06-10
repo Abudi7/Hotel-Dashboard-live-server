@@ -228,37 +228,37 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/filter', name: 'app_booking_filter')]
-public function filter(Request $request, BookingRepository $bookingRepository, UserRepository $userRepository): Response
-{
-    // Check if there's an authenticated user
-    if (!$this->getUser()) {
-        // Handle the case where there's no authenticated user (e.g., redirect to login)
-        return $this->redirectToRoute('app_login');
+    public function filter(Request $request, BookingRepository $bookingRepository, UserRepository $userRepository): Response
+    {
+        // Check if there's an authenticated user
+        if (!$this->getUser()) {
+            // Handle the case where there's no authenticated user (e.g., redirect to login)
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Fetch bookings with associated room and user data
+        $bookings = $bookingRepository->findBookingsWithRoomAndUser();
+
+        // Initialize an array to store users associated with bookings
+        $users = [];
+
+        // Iterate over each booking to access its associated user
+        foreach ($bookings as $booking) {
+            // Accessing user associated with the booking
+            $userEmail = $booking->getCustomername();
+            $user = $userRepository->findOneByEmail($userEmail);
+            
+            // Storing user data in the array
+            $users[] = $user;
+            
+        }
+
+        // Render template with filtered bookings and associated users
+        return $this->render('booking/filter.html.twig', [
+            'bookings' => $bookings,
+            'users' => $users
+        ]);
     }
-
-    // Fetch bookings with associated room and user data
-    $bookings = $bookingRepository->findBookingsWithRoomAndUser();
-
-    // Initialize an array to store users associated with bookings
-    $users = [];
-
-    // Iterate over each booking to access its associated user
-    foreach ($bookings as $booking) {
-        // Accessing user associated with the booking
-        $userEmail = $booking->getCustomername();
-        $user = $userRepository->findOneByEmail($userEmail);
-        
-        // Storing user data in the array
-        $users[] = $user;
-        
-    }
-
-    // Render template with filtered bookings and associated users
-    return $this->render('booking/filter.html.twig', [
-        'bookings' => $bookings,
-        'users' => $users
-    ]);
-}
 
 
 }

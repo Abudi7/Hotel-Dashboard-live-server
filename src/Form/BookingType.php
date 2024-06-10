@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Booking;
-use App\Entity\Rooms;
+use App\Entity\Rooms; // Import Rooms entity
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -39,7 +39,11 @@ class BookingType extends AbstractType
             ->add('address', AddressType::class, [
                 'label' => 'Billing Address'
             ])
-            ->add('rooms', TextType::class)
+            ->add('rooms', EntityType::class, [
+                'class' => Rooms::class,
+                'choice_label' => 'name',
+                'attr' => ['class' => 'form-control', 'id' => 'rooms']
+            ])
             ->add('submit', SubmitType::class)
         ;
     }

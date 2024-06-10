@@ -37,28 +37,45 @@
         </div>
         
         <div class="booking-form form-group mt-2">
-            {{ form_start(form, {'attr': {'class': 'form-inline justify-content-center', 'action': path('app_available_rooms'), 'method': 'get'}}) }}
+            {{ form_start(form, {'attr': {'class': 'form-inline justify-content-center', 'id': 'bookingForm'}}) }}
             <div class="row align-items-center border-dark rounded form-row">
                 <div class="col col1">
                     <div class="form-group mr-2">
-                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+                        {{ form_row(form.startdate, {'attr': {'class': 'form-control', 'autocomplete': 'off', 'id': 'startdate'}}) }}
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group ml-2">
-                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+                        {{ form_row(form.enddate, {'attr': {'class': 'form-control', 'autocomplete': 'off', 'id': 'enddate'}}) }}
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <div class="form-group mt-2">
-                        {{ form_row(form.submit, {'attr': {'class': 'btn btn-purple btn-block'}}) }}
+                        {{ form_row(form.submit, {'attr': {'class': 'btn btn-purple btn-block', 'id': 'submitBtn'}}) }}
                     </div>
                 </div>
             </div>
             {{ form_end(form) }}
         </div>
+
+        <script>
+            document.getElementById('submitBtn').addEventListener('click', function(event) {
+                event.preventDefault();
+                var startDate = document.getElementById('startdate').value;
+                var endDate = document.getElementById('enddate').value;
+                
+                // Store the selected dates in the session
+                sessionStorage.setItem('startDate', startDate);
+                sessionStorage.setItem('endDate', endDate);
+                
+                // Submit the form
+                document.getElementById('bookingForm').submit();
+            });
+        </script>
+
+
 
     </div>
 </div>

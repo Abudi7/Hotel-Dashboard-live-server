@@ -17,26 +17,28 @@ class BookingRepository extends ServiceEntityRepository
     }
 
 
-    /**
-     * Find available rooms by date range.
-     *
-     * @param \DateTimeInterface $startDate
-     * @param \DateTimeInterface $endDate
-     * @return mixed
-     */
-    public function findAvailableRoomsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate)
-    {
-        $qb = $this->createQueryBuilder('b')
-            ->select('r')
-            ->from('App\Entity\Room', 'r')
-            ->leftJoin('b.rooms', 'r')
-            ->where('b.startdate NOT BETWEEN :start AND :end')
-            ->andWhere('b.enddate NOT BETWEEN :start AND :end')
-            ->setParameter('start', $startDate)
-            ->setParameter('end', $endDate);
+ /**
+ * Find available rooms by date range.
+ *
+ * @param \DateTimeInterface $startDate
+ * @param \DateTimeInterface $endDate
+ * @return mixed
+ */
+public function findAvailableRoomsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate)
+{
+    $qb = $this->createQueryBuilder('b')
+        ->select('r')
+        ->from('App\Entity\Rooms', 'r')
+        ->leftJoin('b.Rooms', 'room') // Changed alias from 'r' to 'room'
+        ->where('b.startdate NOT BETWEEN :start AND :end')
+        ->andWhere('b.enddate NOT BETWEEN :start AND :end')
+        ->setParameter('start', $startDate)
+        ->setParameter('end', $endDate);
 
-        return $qb->getQuery()->getResult();
-    }
+    return $qb->getQuery()->getResult();
+}
+
+
 
 
      /**
