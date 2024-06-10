@@ -8,7 +8,7 @@
     <h1 class="mb-4">Show Room: {{ room.name }}</h1>
     <div class="row">
         <div class="col-md-6">
-            <img src="{{ asset('img/image-rooms/' ~ room.img) }}" class="img-fluid" alt="{{ room.name }}">
+            <img style="border-radius: 2rem"src="{{ asset('img/image-rooms/' ~ room.img) }}" class="img-fluid" alt="{{ room.name }}">
         </div>
         <div class="col-md-6">
             <div class="card">
@@ -27,9 +27,7 @@
                             <button type="button" class="btn btn-secondary" onclick="window.history.back();">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
-                            {% if is_granted('ROLE_USER') %}
                             <a href="{{ path('app_booking_new', {'roomId': room.id}) }}" class="btn btn-success">Book Now</a>
-                            {% endif %}
                             {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_rooms_edit', {'id': room.id}) }}" class="btn btn-warning">Edit</a>
                             {% endif %}

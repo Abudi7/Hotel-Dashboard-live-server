@@ -4,7 +4,16 @@
 
 {% block body %}
 <div class="container mt-5">
-    <h1>New Booking</h1>
+
+    <div class="booking-room-image">
+        <div class="booking-room-text">
+            <h1>{{ room.name }}</h1>
+        </div>
+        <div>
+            <img src="{{ asset('img/image-rooms/' ~ room.img) }}" class="card-img-top" alt="{{ room.name }}">
+        </div>
+    </div>
+
     <div class="row justify-content-center">
         <div class="col-md-10">
             {{ form_start(form) }}

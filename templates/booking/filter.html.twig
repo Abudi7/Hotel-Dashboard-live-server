@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Filtered Bookings{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Bookings Dashboards</h1>
+        
+        {% if bookings is not empty %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Name</th>
+                        <th>Room Name</th>
+                        <th>Room Image</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Invoice Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.id }}</td>
+                            <td>{{ users[loop.index0].name }} {{ users[loop.index0].surname }}</td>
+                            <td>{{ booking.rooms.name }}</td>
+                            <td>
+                                <div style="max-width: 100px;">
+                                    <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="img-thumbnail" alt="{{ booking.rooms.name }}">
+                                </div>
+                            </td>
+                            <td>{{ booking.startdate|date('Y-m-d') }}</td>
+                            <td>{{ booking.enddate|date('Y-m-d') }}</td>
+                            <td>{{ booking.invoicenumber }}</td>
+                            <td>
+                                <a href="{{ path('app_booking_edit', {'id': booking.id}) }}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                <a href="{{ path('app_booking_delete', {'id': booking.id, 'token': csrf_token('delete' ~ booking.id)}) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No bookings found.</p>
+        {% endif %}
+    </div>
+{% endblock %}

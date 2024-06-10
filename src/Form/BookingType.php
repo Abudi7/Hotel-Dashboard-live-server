@@ -39,12 +39,7 @@ class BookingType extends AbstractType
             ->add('address', AddressType::class, [
                 'label' => 'Billing Address'
             ])
-            ->add('rooms', EntityType::class, [
-                'class' => Rooms::class,
-                'choice_label' => 'name', // Assuming 'name' is a property of the Room entity
-                'label' => 'Room',
-                // Add any additional options if needed
-            ])
+            ->add('rooms', TextType::class)
             ->add('submit', SubmitType::class)
         ;
     }

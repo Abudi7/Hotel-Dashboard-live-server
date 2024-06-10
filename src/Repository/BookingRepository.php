@@ -53,6 +53,16 @@ class BookingRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+     // Custom method to fetch bookings with associated room and user data
+     public function findBookingsWithRoomAndUser(): array
+     {
+         return $this->createQueryBuilder('b')
+             ->leftJoin('b.Rooms', 'r')
+             ->addSelect('r')
+             ->getQuery()
+             ->getResult();
+     }
+
     //    /**
     //     * @return Booking[] Returns an array of Booking objects
     //     */
