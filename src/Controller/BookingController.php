@@ -67,7 +67,8 @@ class BookingController extends AbstractController
             $customerName = $userRepository->findByEmail($user->getUserIdentifier());
             
             $booking->setCustomername($customerName->getEmail());
-
+            $booking->setRooms($room);
+            
             $username = $customerName->getName() . $customerName->getSurname();
 
             $now = new DateTime('now', new DateTimeZone(date_default_timezone_get()));
