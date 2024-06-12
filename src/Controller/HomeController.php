@@ -52,6 +52,32 @@ class HomeController extends AbstractController
         $startDate = $session->get('startDate');
         $endDate = $session->get('endDate');
 
+        // Validate dates
+        $today = new \DateTime();
+        if (!$startDate || !$endDate) {
+            $this->addFlash('error', 'Start date and end date must be provided.');
+            return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+        }
+
+         // Get start and end dates from the session
+         $startDateString = $session->get('startDate');
+         $endDateString = $session->get('endDate');
+
+        if (!$startDate || !$endDate) {
+            $this->addFlash('error', 'Invalid date format.');
+            return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+        }
+
+        if ($startDate < $today || $endDate < $today) {
+            $this->addFlash('error', 'Dates cannot be in the past.');
+            return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+        }
+
+        if ($startDate > $endDate) {
+            $this->addFlash('error', 'Start date cannot be later than end date.');
+            return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+        }
+
         // Query the database to find rooms that are available within the selected date range
         $availableRooms = $entityManager->getRepository(Rooms::class)->createQueryBuilder('r')
             ->leftJoin('r.bookings', 'b')
@@ -64,8 +90,8 @@ class HomeController extends AbstractController
         // Render the template with the available rooms data
         return $this->render('home/available_rooms.html.twig', [
             'availableRooms' => $availableRooms,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
+            'startDate' => $startDate->format('Y-m-d'),
+            'endDate' => $endDate->format('Y-m-d'),
         ]);
     }
 }
