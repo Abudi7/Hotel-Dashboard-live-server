@@ -8,23 +8,32 @@
         <head>
             <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
             <script>
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const calendarEl = document.getElementById('calendar')
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth'
-                })
-                calendar.render()
-            })
-
+                document.addEventListener('DOMContentLoaded', function() {
+                    const calendarEl = document.getElementById('calendar');
+                    const calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        events: [
+                            {% for booking in bookings %}
+                            {
+                                title: '{{ users[loop.index0].name }} {{ users[loop.index0].surname }} - {{ booking.rooms.name }}', // Room name as event title
+                                start: '{{ booking.startdate|date('Y-m-d') }}', // Start date of booking
+                                end: '{{ booking.enddate|date('Y-m-d') }}', // End date of booking
+                                description: '{{ booking.invoicenumber }}', // Additional info if needed
+                            },
+                            {% endfor %}
+                        ]
+                    });
+                    calendar.render();
+                });
             </script>
         </head>
         <body>
             <div id='calendar'></div>
         </body>
+        <h1 class="mb-4">Admin Dashboards</h1>
         {% if bookings is not empty %}
-            <table class="table">
-                <thead>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
                     <tr>
                         <th>Booking ID</th>
                         <th>Customer Name</th>
