@@ -1,20 +1,18 @@
 <?php
 
 namespace App\Form;
-
 use App\Entity\Booking;
-use App\Entity\Rooms; // Import Rooms entity
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Rooms; 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType; // Import TextType
+use Symfony\Component\Form\Extension\Core\Type\TextType; 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security; // Import Security
+use Symfony\Component\Security\Core\Security; 
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 
 class BookingType extends AbstractType
 {
@@ -30,43 +28,56 @@ class BookingType extends AbstractType
         $user = $this->security->getUser(); // Get the logged-in user
 
         $builder
-            ->add('startdate', DateType::class, [
+           // Add other form fields as needed
+           ->add('startdate', DateType::class, [
                 'widget' => 'single_text',
+                'constraints' => [
+                    new Callback([$this, 'validateStartDate']),
+                ],
             ])
             ->add('enddate', DateType::class, [
                 'widget' => 'single_text',
+                'constraints' => [
+                    new GreaterThanOrEqual([
+                        'value' => 'today',
+                        'message' => 'End date must be after the start date.',
+                    ]),
+                ],
             ])
             ->add('customername', TextType::class, [
                 'data' => $user->getUserIdentifier(), // Set the default value to the email of the logged-in user
                 'disabled' => true, // Make the field disabled so it cannot be edited
             ])
             ->add('address', AddressType::class, [
-                'label' => 'Billing Address'
+                'label' => 'Billing Address',
             ])
-            // ->add('rooms', TextType::class)
             ->add('submit', SubmitType::class)
         ;
     }
 
-    
-    public function validateDates($object, ExecutionContextInterface $context): void
-    {
-        $startDate = $context->getRoot()->get('startdate')->getData();
-        $endDate = $context->getRoot()->get('enddate')->getData();
-
-        if ($startDate && $endDate && $startDate > $endDate) {
-            $context->buildViolation('End date must be after start date.')
-                ->atPath('enddate')
-                ->addViolation();
-        }
-    }
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            // Configure your data class here
             'data_class' => Booking::class,
-            'constraints' => [
-                new Callback([$this, 'validateDates']),
-            ],
         ]);
+    }
+
+    public function validateStartDate($value, ExecutionContextInterface $context)
+    {
+        $formData = $context->getRoot()->getData();
+        $endDate = $formData->getEnddate();
+        
+        if ($endDate !== null && $value > $endDate) {
+            $context->buildViolation('Start date cannot be after the end date.')
+                ->atPath('startdate')
+                ->addViolation();
+        }
+
+        if ($value < new \DateTime('today')) {
+            $context->buildViolation('Start date cannot be in the past.')
+                ->atPath('startdate')
+                ->addViolation();
+        }
     }
 }

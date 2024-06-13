@@ -32,66 +32,19 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/new/{roomId}', name: 'app_booking_new')]
-    public function new(
-        Request $request, 
-        int $roomId,
-        RoomsRepository $roomsRepository, 
-        BookingRepository $bookingRepository, 
-        SessionInterface $session, 
-        MailerInterface $mailer,
-        UserRepository $userRepository,
-        EntityManagerInterface $entityManager
-    ): Response {
+    public function new(Request $request, int $roomId,RoomsRepository $roomsRepository ,BookingRepository $bookingRepository, SessionInterface $session, MailerInterface $mailer,UserRepository $userRepository): Response
+    {
         // Create a new booking entity
         $booking = new Booking();
-    
-        // Find the room by ID
+
         $room = $roomsRepository->find($roomId);
-    
-        // Get start and end dates from the session
-        $startDateString = $session->get('startDate');
-        $endDateString = $session->get('endDate');
-    
-        // Validate the date strings
-        if (!$startDateString || !$endDateString) {
-            $this->addFlash('error', 'Start date and end date must be provided.');
-            return $this->redirectToRoute('app_booking_new'); // Change 'app_booking_new' to the route you want to redirect to
-        }
-    
-        // Check if the dates are already DateTime objects or strings
-        if ($startDateString instanceof \DateTime) {
-            $startDate = $startDateString;
-        } else {
-            $startDate = DateTime::createFromFormat('Y-m-d', $startDateString);
-        }
-    
-        if ($endDateString instanceof \DateTime) {
-            $endDate = $endDateString;
-        } else {
-            $endDate = DateTime::createFromFormat('Y-m-d', $endDateString);
-        }
-    
-        // Check if dates were created successfully
-        if (!$startDate || !$endDate || ($startDateString !== $startDate->format('Y-m-d') && !$startDate instanceof \DateTime) || ($endDateString !== $endDate->format('Y-m-d') && !$endDate instanceof \DateTime)) {
-            $this->addFlash('error', 'Invalid date format.');
-            return $this->redirectToRoute('app_booking_new'); // Change 'app_booking_new' to the route you want to redirect to
-        }
-    
-        $today = new DateTime();
-        $today->setTime(0, 0); // Ignore the time part for comparison
-    
-        if ($startDate < $today || $endDate < $today) {
-            $this->addFlash('error', 'Dates cannot be in the past.');
-            return $this->redirectToRoute('app_booking_new'); // Change 'app_booking_new' to the route you want to redirect to
-        }
-    
-        if ($startDate > $endDate) {
-            $this->addFlash('error', 'Start date cannot be later than end date.');
-            return $this->redirectToRoute('app_booking_new'); // Change 'app_booking_new' to the route you want to redirect to
-        }
     
         // Create the booking form
         $form = $this->createForm(BookingType::class, $booking);
+    
+        // Get the start date and end date from the session
+        $startDate = $session->get('startDate');
+        $endDate = $session->get('endDate');
     
         // Set the start date and end date values in the form
         $form->get('startdate')->setData($startDate);
@@ -99,38 +52,45 @@ class BookingController extends AbstractController
     
         // Handle the form submission
         $form->handleRequest($request);
-    
+
+
+        
+
         if ($form->isSubmitted() && $form->isValid()) {
             // Get the logged-in user
             $user = $this->getUser();
-    
+
             if ($user === null) {
                 return $this->redirectToRoute('app_login');
             }
-    
-            $customerName = $userRepository->findOneBy(['email' => $user->getUserIdentifier()]);
-    
+
+            $customerName = $userRepository->findByEmail($user->getUserIdentifier());
+            
             $booking->setCustomername($customerName->getEmail());
             $booking->setRooms($room);
-    
-            $username = $customerName->getName() . ' ' . $customerName->getSurname();
-    
+            
+            $username = $customerName->getName() . $customerName->getSurname();
+
             $now = new DateTime('now', new DateTimeZone(date_default_timezone_get()));
             $booking->setCreatedat($now);
-    
+
+            $room = $this->entityManager->getRepository(Rooms::class)->find($roomId);
+            $booking->setRooms($room);
             $invoiceNumber = 'Hotel-Dashboard ' . mt_rand(1000, 9999);
             $booking->setInvoicenumber($invoiceNumber);
-    
-            $entityManager->persist($booking);
-            $entityManager->flush();
-    
+
+            $address = $booking->getAddress();
+            $this->entityManager->persist($address);
+            $this->entityManager->persist($booking);
+            $this->entityManager->flush();
+
             // Calculate number of nights
             $numberOfNights = $booking->getStartdate()->diff($booking->getEnddate())->days;
-    
+
             // Calculate total price
             $totalPrice = $numberOfNights * $room->getPrice();
-    
-            // Construct email content
+
+            // <!-- Construct email content -->
             $emailContent = "
                 <div style='font-family: Arial, sans-serif;'>
                     <p style='color: #333; font-size: 16px;'>Dear $username,</p>
@@ -147,19 +107,21 @@ class BookingController extends AbstractController
                     <p style='color: #333; font-size: 16px;'>Best regards,<br>Hotel Dashboard Team</p>
                 </div>
             ";
-    
+
+
             // Send email with invoice and thank you message
             $email = (new Email())
                 ->from('info@hotel-dashboard.at')
                 ->to($user->getEmail())
                 ->subject('Booking Confirmation and Invoice')
                 ->html($emailContent);
+            //dump($email);die;
             $mailer->send($email);
-    
+
             // Return a response if needed
             return $this->redirectToRoute('app_booking_success');
         }
-    
+
         // Check if start and end dates are not null before fetching available rooms
         if ($startDate !== null && $endDate !== null) {
             // Retrieve available rooms by date range from the repository
@@ -167,7 +129,7 @@ class BookingController extends AbstractController
         } else {
             $availableRooms = [];
         }
-    
+
         return $this->render('booking/new.html.twig', [
             'form' => $form->createView(),
             'availableRooms' => $availableRooms,
@@ -257,14 +219,21 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/delete/{id}', name: 'app_booking_delete')]
-    public function delete(Request $request, Booking $booking): Response
+    public function delete(Request $request, Booking $booking, BookingRepository $bookingRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$booking->getId(), $request->request->get('_token'))) {
-            $this->entityManager->remove($booking);
-            $this->entityManager->flush();
-        }
+        // Replace this part with CSRF token validation as needed
+        // if ($this->isCsrfTokenValid('delete'.$booking->getId(), $request->request->get('_token'))) {
+        $startDate = $booking->getStartdate(); // Adjust this based on your Booking entity
+        $endDate = $booking->getEnddate();     // Adjust this based on your Booking entity
 
-        return $this->redirectToRoute('app_booking');
+        // Delete bookings within the date range
+        $bookingRepository->deleteBookingsByDateRange($startDate, $endDate);
+        
+        // Optional: Delete the main booking record if required
+        $this->entityManager->remove($booking);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('app_booking_filter');
     }
 
     #[Route('/booking/filter', name: 'app_booking_filter')]
@@ -299,6 +268,7 @@ class BookingController extends AbstractController
             'users' => $users
         ]);
     }
+
 
 
 }

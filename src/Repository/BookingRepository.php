@@ -38,7 +38,29 @@ public function findAvailableRoomsByDateRange(\DateTimeInterface $startDate, \Da
     return $qb->getQuery()->getResult();
 }
 
+/**
+ * Find and delete bookings within a date range.
+ *
+ * @param \DateTimeInterface $startDate
+ * @param \DateTimeInterface $endDate
+ * @return void
+ */
+public function deleteBookingsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
+{
+    $bookings = $this->createQueryBuilder('b')
+        ->select('b')
+        ->where('b.startdate BETWEEN :start AND :end')
+        ->orWhere('b.enddate BETWEEN :start AND :end')
+        ->setParameter('start', $startDate)
+        ->setParameter('end', $endDate)
+        ->getQuery()
+        ->getResult();
 
+    foreach ($bookings as $booking) {
+        $this->getEntityManager()->remove($booking);
+    }
+    $this->getEntityManager()->flush();
+}
 
 
      /**

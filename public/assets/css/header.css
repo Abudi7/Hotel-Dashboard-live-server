@@ -251,6 +251,59 @@ footer {
     filter: brightness(0.5);
 }
 
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background-color: #ddd;
+    margin-top: 20px;
+}
+
+.calendar-day {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    min-height: 100px;
+    position: relative;
+}
+
+.calendar-day-header {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+}
+
+.booking {
+    background-color: #ffeb3b;
+    margin: 5px 0;
+    padding: 3px;
+    border-radius: 3px;
+    font-size: 12px;
+    display: block;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+}
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.calendar-nav button {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.calendar-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
 
 /* Mobile Anpassungen */
 
