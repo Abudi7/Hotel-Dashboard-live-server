@@ -6,6 +6,7 @@
 parameters:
     image_directory: '%kernel.project_dir%/public/img/image-rooms'
     profile: '%kernel.project_dir%/public/img/profile'
+    lostFounds_directory: '%kernel.project_dir%/public/img/lost-Founds'
 
 services:
     App\Form\BookingType:

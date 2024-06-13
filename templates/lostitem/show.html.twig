@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lost Item Details{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4 mb-4 text-center">Lost Item Details</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Id</th>
+                            <td>{{ lostitem.id }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Name</th>
+                            <td>{{ lostitem.name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Description</th>
+                            <td>{{ lostitem.description }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Location Found</th>
+                            <td>{{ lostitem.locationFound }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date Found</th>
+                            <td>{{ lostitem.dateFound ? lostitem.dateFound|date('Y-m-d H:i:s') : '' }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Status</th>
+                            <td>{{ lostitem.status }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Owner Name</th>
+                            <td>{{ lostitem.ownerName }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Owner Contact</th>
+                            <td>{{ lostitem.ownerContact }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <a href="{{ path('app_lostitem_index') }}" class="btn btn-secondary">Back to List</a>
+            <a href="{{ path('app_lostitem_edit', {'id': lostitem.id}) }}" class="btn btn-primary">Edit</a>
+        </div>
+
+        {{ include('lostitem/_delete_form.html.twig') }}
+    </div>
+{% endblock %}

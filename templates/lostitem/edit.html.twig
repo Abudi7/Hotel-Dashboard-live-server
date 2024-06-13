@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Lostitem{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h1 class="mt-4 mb-4">Edit Lostitem</h1>
+
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                        <div class="form-group">
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.description) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.locationFound) }}
+                            {{ form_widget(form.locationFound, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.dateFound) }}
+                            {{ form_widget(form.dateFound, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.status) }}
+                            {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.ownerName) }}
+                            {{ form_widget(form.ownerName, {'attr': {'class': 'form-control', 'readonly': true}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.ownerContact) }}
+                            {{ form_widget(form.ownerContact, {'attr': {'class': 'form-control', 'readonly': true}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.img) }}
+                            {{ form_widget(form.img, {'attr': {'class': 'form-control-file'}}) }}
+                            {% if lostitem.img %}
+                                <div class="mt-2">
+                                    <img src="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" alt="{{ lostitem.name }}" class="img-thumbnail">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <a href="{{ path('app_lostitem_index') }}" class="btn btn-secondary mt-3">Back to list</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,69 @@
+/* styles.css */
+
+/* Container für jeden Eintrag */
+.list-container {
+    margin: 20px 50px;
+    /* oben/unten 20px, links/rechts 50px */
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+}
+
+/* Stile für die linken Elemente */
+.list-left {
+    flex: 1;
+    padding-left: 10px;
+}
+
+/* Stile für die rechten Elemente */
+.list-right {
+    flex: 1;
+    text-align: right;
+    padding-right: 10px;
+}
+
+/* Link-Stil */
+.list-link {
+    text-decoration: none;
+    color: #007bff;
+    /* Farbe kann angepasst werden */
+    margin-right: 10px;
+}
+
+.list-link:hover {
+    text-decoration: underline;
+}
+
+.no-records {
+    text-align: center;
+    font-size: small;
+    margin-top: 20px;
+}
+
+.create-link {
+    float: right;
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: auto;
+    /* Automatische Ausrichtung nach rechts */
+    margin-right: 50px;
+    /* Abstand vom rechten Rand */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.create-link:hover {
+    background-color: #0056b3;
+}

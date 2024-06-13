@@ -17,50 +17,50 @@ class BookingRepository extends ServiceEntityRepository
     }
 
 
- /**
- * Find available rooms by date range.
- *
- * @param \DateTimeInterface $startDate
- * @param \DateTimeInterface $endDate
- * @return mixed
- */
-public function findAvailableRoomsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate)
-{
-    $qb = $this->createQueryBuilder('b')
-        ->select('r')
-        ->from('App\Entity\Rooms', 'r')
-        ->leftJoin('b.Rooms', 'room') // Changed alias from 'r' to 'room'
-        ->where('b.startdate NOT BETWEEN :start AND :end')
-        ->andWhere('b.enddate NOT BETWEEN :start AND :end')
-        ->setParameter('start', $startDate)
-        ->setParameter('end', $endDate);
+    /**
+     * Find available rooms by date range.
+     *
+     * @param \DateTimeInterface $startDate
+     * @param \DateTimeInterface $endDate
+     * @return mixed
+     */
+    public function findAvailableRoomsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate)
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('r')
+            ->from('App\Entity\Rooms', 'r')
+            ->leftJoin('b.Rooms', 'room') // Changed alias from 'r' to 'room'
+            ->where('b.startdate NOT BETWEEN :start AND :end')
+            ->andWhere('b.enddate NOT BETWEEN :start AND :end')
+            ->setParameter('start', $startDate)
+            ->setParameter('end', $endDate);
 
-    return $qb->getQuery()->getResult();
-}
-
-/**
- * Find and delete bookings within a date range.
- *
- * @param \DateTimeInterface $startDate
- * @param \DateTimeInterface $endDate
- * @return void
- */
-public function deleteBookingsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
-{
-    $bookings = $this->createQueryBuilder('b')
-        ->select('b')
-        ->where('b.startdate BETWEEN :start AND :end')
-        ->orWhere('b.enddate BETWEEN :start AND :end')
-        ->setParameter('start', $startDate)
-        ->setParameter('end', $endDate)
-        ->getQuery()
-        ->getResult();
-
-    foreach ($bookings as $booking) {
-        $this->getEntityManager()->remove($booking);
+        return $qb->getQuery()->getResult();
     }
-    $this->getEntityManager()->flush();
-}
+
+    /**
+     * Find and delete bookings within a date range.
+     *
+     * @param \DateTimeInterface $startDate
+     * @param \DateTimeInterface $endDate
+     * @return void
+     */
+    public function deleteBookingsByDateRange(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
+    {
+        $bookings = $this->createQueryBuilder('b')
+            ->select('b')
+            ->where('b.startdate BETWEEN :start AND :end')
+            ->orWhere('b.enddate BETWEEN :start AND :end')
+            ->setParameter('start', $startDate)
+            ->setParameter('end', $endDate)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($bookings as $booking) {
+            $this->getEntityManager()->remove($booking);
+        }
+        $this->getEntityManager()->flush();
+    }
 
 
      /**
@@ -86,6 +86,22 @@ public function deleteBookingsByDateRange(\DateTimeInterface $startDate, \DateTi
              ->getQuery()
              ->getResult();
      }
+     /**
+     * Find the latest booking for a specific room.
+     *
+     * @param Rooms $room The room entity for which to find the latest booking.
+     * @return Booking|null The latest booking entity for the room, or null if no booking is found.
+     */
+    public function findLatestBookingByRoom(Rooms $room): ?Booking
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.Rooms = :room')
+            ->setParameter('room', $room)
+            ->orderBy('b.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
     //    /**
     //     * @return Booking[] Returns an array of Booking objects

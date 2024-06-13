@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lost Items Index{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <style>
+        .list-container {
+            margin-top: 20px;
+        }
+        .list-item {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-item .list-left, .list-item .list-right {
+            flex: 1;
+        }
+        .list-item .list-left {
+            padding-right: 15px;
+        }
+        .list-item .list-right {
+            padding-left: 15px;
+        }
+        .list-link {
+            margin-right: 10px;
+        }
+        .create-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        .no-records {
+            text-align: center;
+            font-style: italic;
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4 mb-4 text-center">Lost Items</h1>
+
+        <div class="list-container">
+            {% if lostitems is not empty %}
+                {% for lostitem in lostitems %}
+                    <div class="list-item">
+                        <div class="list-left">
+                            <p><strong>Id:</strong> {{ lostitem.id }}</p>
+                            <p><strong>Name:</strong> {{ lostitem.name }}</p>
+                            <p><strong>Description:</strong> {{ lostitem.description }}</p>
+                        </div>
+                        <div class="list-right">
+                            <p><strong>Location Found:</strong> {{ lostitem.locationFound }}</p>
+                            <p><strong>Date Found:</strong> {{ lostitem.dateFound ? lostitem.dateFound|date('Y-m-d H:i:s') : '' }}</p>
+                            <p><strong>Status:</strong> {{ lostitem.status }}</p>
+                            <p><strong>Owner Name:</strong> {{ lostitem.ownerName }}</p>
+                            <p><strong>Owner Contact:</strong> {{ lostitem.ownerContact }}</p>
+                            <p>
+                                <a href="{{ path('app_lostitem_show', {'id': lostitem.id}) }}" class="btn btn-info btn-sm list-link">Show</a>
+                                <a href="{{ path('app_lostitem_edit', {'id': lostitem.id}) }}" class="btn btn-primary btn-sm list-link">Edit</a>
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-records">No records found</p>
+            {% endif %}
+        </div>
+
+        <a href="{{ path('app_lostitem_new') }}" class="btn btn-success create-link">Create New</a>
+    </div>
+{% endblock %}
