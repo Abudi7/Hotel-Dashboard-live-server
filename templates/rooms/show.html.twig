@@ -27,7 +27,11 @@
                             <button type="button" class="btn btn-secondary" onclick="window.history.back();">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
+                            {% if app.user %}
                             <a href="{{ path('app_booking_new', {'roomId': room.id}) }}" class="btn btn-success">Book Now</a>
+                            {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-success">Book Now</a>
+                            {% endif %}
                             {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('app_rooms_edit', {'id': room.id}) }}" class="btn btn-warning">Edit</a>
                             {% endif %}
