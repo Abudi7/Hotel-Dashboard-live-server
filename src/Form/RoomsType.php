@@ -36,10 +36,10 @@ class RoomsType extends AbstractType
             // ])
             ->add('type', ChoiceType::class, [
                 'choices' => [
-                    'Big' => 'big',
-                    'Small' => 'small',
-                    'Luxury' => 'luxury',
-                    'Apartment' => 'apartment',
+                    '3 Personen' => '3 Personen',
+                    '1 Person' => '1 Person',
+                    '4 Personen' => '4 Personen',
+                    '10 Personen' => '10 Personen',
                 ],
             ])
             ->add('img',FileType::class, [

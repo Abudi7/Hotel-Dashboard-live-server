@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 use App\Entity\Rooms; // Import Rooms entity if not already imported
 
@@ -80,12 +81,40 @@ class LostitemController extends AbstractController
     }
 
     #[Route('/lostitem/{id}/edit', name: 'app_lostitem_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Lostitem $lostitem, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Lostitem $lostitem, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(LostitemType::class, $lostitem);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle file upload
+            $imgFile = $form->get('img')->getData();
+
+            if ($imgFile) {
+                $originalFilename = pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imgFile->guessExtension();
+
+                try {
+                    $imgFile->move(
+                        $this->getParameter('lostFounds_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Handle file upload error
+                    throw new \Exception('Error uploading file: '.$e->getMessage());
+                }
+
+                // Remove old image if exists
+                $oldFilename = $lostitem->getImg();
+                if ($oldFilename) {
+                    unlink($this->getParameter('lostFounds_directory') . '/' . $oldFilename);
+                }
+
+                // Update the image filename in the entity
+                $lostitem->setImg($newFilename);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_lostitem_index', [], Response::HTTP_SEE_OTHER);
@@ -96,6 +125,7 @@ class LostitemController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
 
     #[Route('/lostitem/{id}', name: 'app_lostitem_delete', methods: ['POST'])]
     public function delete(Request $request, Lostitem $lostitem, EntityManagerInterface $entityManager): Response

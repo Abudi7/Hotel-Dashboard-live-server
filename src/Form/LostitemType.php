@@ -46,17 +46,17 @@ class LostitemType extends AbstractType
                 ],
             ]);
 
-        // Add a data transformer to handle the 'img' field
-        $builder->get('img')->addModelTransformer(new CallbackTransformer(
-            function ($image) {
-                // Transform the filename (string) to a File object
-                return $image ? new File($this->getParameter('lostFounds_directory') . '/' . $image) : null;
-            },
-            function ($file) {
-                // Transform the File object back to a string (filename)
-                return $file instanceof File ? $file->getFilename() : null;
-            }
-        ));
+        // // Add a data transformer to handle the 'img' field
+        // $builder->get('img')->addModelTransformer(new CallbackTransformer(
+        //     function ($image) {
+        //         // Transform the filename (string) to a File object
+        //         return $image ? new File($this->getParameter('lostFounds_directory') . '/' . $image) : null;
+        //     },
+        //     function ($file) {
+        //         // Transform the File object back to a string (filename)
+        //         return $file instanceof File ? $file->getFilename() : null;
+        //     }
+        // ));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

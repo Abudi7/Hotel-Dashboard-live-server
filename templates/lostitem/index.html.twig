@@ -3,7 +3,6 @@
 {% block title %}Lost Items Index{% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <style>
         .list-container {
@@ -64,6 +63,7 @@
                             <p><strong>Status:</strong> {{ lostitem.status }}</p>
                             <p><strong>Owner Name:</strong> {{ lostitem.ownerName }}</p>
                             <p><strong>Owner Contact:</strong> {{ lostitem.ownerContact }}</p>
+                            <img style="border-radius: 2rem"src="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" class="img-fluid" alt="{{ lostitem.img }}">
                             <p>
                                 <a href="{{ path('app_lostitem_show', {'id': lostitem.id}) }}" class="btn btn-info btn-sm list-link">Show</a>
                                 <a href="{{ path('app_lostitem_edit', {'id': lostitem.id}) }}" class="btn btn-primary btn-sm list-link">Edit</a>

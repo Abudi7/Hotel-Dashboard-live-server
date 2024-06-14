@@ -42,6 +42,10 @@
                             <th scope="row">Owner Contact</th>
                             <td>{{ lostitem.ownerContact }}</td>
                         </tr>
+                         <tr>
+                            <th scope="row">Image</th>
+                            <td><img style="border-radius: 2rem"src="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" class="img-fluid" alt="{{ lostitem.img }}"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
