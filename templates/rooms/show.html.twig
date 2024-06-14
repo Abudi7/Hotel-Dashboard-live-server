@@ -5,7 +5,7 @@
 
 {% block body %}
 <div class="container mt-4">
-    <h1 class="mb-4">Show Room: {{ room.name }}</h1>
+    <h1 class="mb-4">{{ room.name }}</h1>
     <div class="row">
         <div class="col-md-6">
             <img style="border-radius: 2rem"src="{{ asset('img/image-rooms/' ~ room.img) }}" class="img-fluid" alt="{{ room.name }}">
