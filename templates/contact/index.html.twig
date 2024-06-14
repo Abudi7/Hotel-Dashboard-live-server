@@ -6,24 +6,26 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
+                {% if app.flashes('success') %}
+                    <div class="alert alert-success text-dark" role="alert">
+                        {{ app.flashes('success')|first }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+
+                {% if app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {% for message in app.flashes('error') %}
+                            {{ message }}<br>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title text-center mb-4">Contact Us</h1>
                         
-                        {% if app.flashes('success') %}
-                            <div class="alert alert-success" role="alert">
-                                {{ app.flashes('success')|first }}
-                            </div>
-                        {% endif %}
-
-                        {% if app.flashes('error') %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for message in app.flashes('error') %}
-                                    {{ message }}<br>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
                         <form method="post">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Your Name</label>

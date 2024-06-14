@@ -6,6 +6,8 @@ use App\Entity\Lostitem;
 use App\Form\LostitemType;
 use App\Repository\LostitemRepository;
 use App\Repository\BookingRepository;
+use App\Repository\RoomsRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,18 +17,59 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-use App\Entity\Rooms; // Import Rooms entity if not already imported
+use App\Entity\Rooms; 
 
 class LostitemController extends AbstractController
 {
     #[Route('/lostitem', name: 'app_lostitem_index', methods: ['GET'])]
-    public function index(LostitemRepository $lostitemRepository): Response
+    public function index(LostitemRepository $lostitemRepository, RoomsRepository $roomsRepository): Response
     {
+        $lostitems = $lostitemRepository->findAll(); // Fetch all lost items
+        $rooms = $roomsRepository->findAll(); // Fetch all rooms for dropdown
+
         return $this->render('lostitem/index.html.twig', [
-            'lostitems' => $lostitemRepository->findAll(),
+            'lostitems' => $lostitems,
+            'rooms' => $rooms,
         ]);
     }
-
+    #[Route('/lostitems/latest-booking', name: 'app_lostitem_latest_booking', methods: ['GET'])]
+    public function latestBookingDetails(Request $request, BookingRepository $bookingRepository, UserRepository $userRepository, RoomsRepository $roomsRepository): Response
+    {
+        $roomName = $request->query->get('roomName');
+        $rooms = $roomsRepository->findAll(); // Fetch all rooms for dropdown
+    
+        $latestBookings = []; // Initialize an empty array for latest bookings
+        $users = []; // Initialize an empty array for users
+    
+        if ($roomName) {
+            // Find the room by name
+            $room = $roomsRepository->findOneBy(['name' => $roomName]);
+    
+            if (!$room) {
+                throw $this->createNotFoundException('Room not found');
+            }
+    
+            // Fetch latest booking(s) for the selected room
+            $latestBookings = $bookingRepository->findLatestBookingByRoom($room);
+    
+            // Fetch user associated with the latest booking
+            $userEmail = $latestBookings->getCustomername();
+            $user = $userRepository->findOneByEmail($userEmail);
+                
+            // Storing user data in the array
+                $users[] = $user;
+                
+            
+        }
+    
+        return $this->render('lostitem/latest_booking.html.twig', [
+            'rooms' => $rooms,
+            'selectedRoomName' => $roomName,
+            'latestBooking' => $latestBookings,
+            'users' => $users, // Pass users to the template
+        ]);
+    }
+    
     #[Route('/lostitem/new', name: 'app_lostitem_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
@@ -138,26 +181,56 @@ class LostitemController extends AbstractController
         return $this->redirectToRoute('app_lostitem_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
-     * @Route("/fetch-latest-booking/{roomId}", name="fetch_latest_booking", methods={"GET"})
+     /**
+     * @Route("/lostitems/{roomIdOrName}", name="lostitems_by_room")
      */
-    #[Route('/fetch-latest-booking/{roomId}', name: 'fetch_latest_booking', methods: ['GET'])]
-    public function fetchLatestBookingAction(Request $request, BookingRepository $bookingRepository, int $roomId): JsonResponse
+    #[Route('/lostitems/{roomIdOrName}', name: 'lostitems_by_room', methods: ['POST'])]
+    public function lostItemsByRoom(LostitemRepository $lostitemRepository, $roomIdOrName): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $room = $entityManager->getRepository(Rooms::class)->find($roomId);
+        // Check if the roomIdOrName is numeric (assuming it's room ID) or not (assuming it's room name)
+        if (is_numeric($roomIdOrName)) {
+            $room = $this->getDoctrine()->getRepository(Rooms::class)->find($roomIdOrName);
+        } else {
+            $room = $this->getDoctrine()->getRepository(Rooms::class)->findOneBy(['name' => $roomIdOrName]);
+        }
+
+        if (!$room) {
+            throw $this->createNotFoundException('Room not found');
+        }
+
+        // Fetch lost items associated with the room
+        $lostItems = $lostitemRepository->findByRoom($room);
+
+        return $this->render('lostitem/lostitems_by_room.html.twig', [
+            'room' => $room,
+            'lostItems' => $lostItems,
+        ]);
+    }
+
+    #[Route('/fetch-latest-booking', name: 'app_fetch_latest_booking', methods: ['GET'])]
+    public function fetchLatestBooking(Request $request, BookingRepository $bookingRepository, RoomsRepository $roomsRepository): JsonResponse
+    {
+        $roomName = $request->query->get('roomName');
+
+        // Find the room by name
+        $room = $roomsRepository->findOneBy(['name' => $roomName]);
 
         if (!$room) {
             return new JsonResponse(['error' => 'Room not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        // Fetch the latest booking for the room
+        // Fetch latest booking for the room
         $latestBooking = $bookingRepository->findLatestBookingByRoom($room);
 
-        // Prepare data to send back as JSON response
+        if (!$latestBooking) {
+            return new JsonResponse(['error' => 'No booking found for this room'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Prepare JSON response with relevant booking information
         $responseData = [
-            'ownerName' => $latestBooking ? $latestBooking->getOwnerName() : '',
-            'ownerContact' => $latestBooking ? $latestBooking->getOwnerContact() : '',
+            'id' => $latestBooking->getId(),
+            'createdAt' => $latestBooking->getCreatedAt()->format('Y-m-d H:i:s'),
+            // Add other fields as needed based on your Booking entity
         ];
 
         return new JsonResponse($responseData);

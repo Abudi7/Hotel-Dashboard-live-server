@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Latest Booking Details{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4 mb-4 text-center">Latest Booking Details</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Select Room</h3>
+                <form action="{{ path('app_lostitem_latest_booking') }}" method="get">
+                    <div class="form-group">
+                        <label for="roomSelect">Room:</label>
+                        <select id="roomSelect" name="roomName" class="form-control">
+                            <option value="">-- Select Room --</option>
+                            {% for room in rooms %}
+                                <option value="{{ room.name }}" {% if selectedRoomName == room.name %}selected{% endif %}>
+                                    {{ room.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Fetch Latest Booking</button>
+                </form>
+            </div>
+        </div>
+
+        {% if latestBooking %}
+            <hr>
+
+            <h3>Latest Booking</h3>
+            <p><strong>Booking ID:</strong> {{ latestBooking.id }}</p>
+            <p><strong>Name:</strong> {{ users[0].name }} {{ users[0].surname }} </p>
+            <p><strong>Booking Date:</strong> {{ latestBooking.createdAt|date('Y-m-d H:i:s') }}</p>
+            <p><strong>Check in:</strong> {{ latestBooking.startdate|date('Y-m-d H:i:s') }}</p>
+            <p><strong>Check out:</strong> {{ latestBooking.enddate|date('Y-m-d H:i:s') }}</p>
+            <p><strong>Invoice Number:</strong> {{ latestBooking.invoicenumber }}</p>
+            <!-- Adjust based on your Booking entity structure -->
+        {% else %}
+            <p class="no-records text-center mt-4">No latest booking found for the selected room.</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Lostitem;
+use App\Entity\Rooms;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,15 @@ class LostitemRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Lostitem::class);
+    }
+    public function findByRoom(Rooms $room)
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.room = :room')
+            ->setParameter('room', $room)
+            ->orderBy('l.id', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**
