@@ -54,18 +54,30 @@ class HomeController extends AbstractController
 
         // Validate dates
         $today = new \DateTime();
+        $today->setTime(0, 0);
+
         if (!$startDate || !$endDate) {
             $this->addFlash('error', 'Start date and end date must be provided.');
             return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
         }
 
-         // Get start and end dates from the session
-         $startDateString = $session->get('startDate');
-         $endDateString = $session->get('endDate');
+        // Check if the retrieved dates are strings and convert them to DateTime objects
+        if (!$startDate instanceof \DateTime) {
+            try {
+                $startDate = new \DateTime($startDate);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Invalid start date format.');
+                return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+            }
+        }
 
-        if (!$startDate || !$endDate) {
-            $this->addFlash('error', 'Invalid date format.');
-            return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+        if (!$endDate instanceof \DateTime) {
+            try {
+                $endDate = new \DateTime($endDate);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Invalid end date format.');
+                return $this->redirectToRoute('app_home'); // Change 'app_home' to the route you want to redirect to
+            }
         }
 
         if ($startDate < $today || $endDate < $today) {

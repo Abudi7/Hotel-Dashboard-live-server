@@ -17,6 +17,7 @@ class DateRangeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $today = new \DateTime();
+        $today->setTime(0, 0); // Ensure the comparison is done at the start of the day
         $todayString = $today->format('Y-m-d');
 
         $builder
@@ -75,4 +76,3 @@ class DateRangeType extends AbstractType
         }
     }
 }
-
