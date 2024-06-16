@@ -10,7 +10,7 @@
         {% for booking in bookings %}
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="card-img-top" alt="{{ booking.rooms.name }}">
+                <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="card-img-top custom-card-img" alt="{{ booking.rooms.name }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ booking.rooms.name }}</h5>
                     <p class="card-text">Start Date: {{ booking.startdate|date('Y-m-d') }}</p>
