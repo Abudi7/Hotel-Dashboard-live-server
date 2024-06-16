@@ -19,11 +19,11 @@
                     <p class="card-text">Price: ${{ booking.rooms.price }} per night</p>
                     <p class="card-text">Total Price: ${{ booking.rooms.price * days }}</p>
                     {% if is_granted('ROLE_ADMIN') %}
-                    <div class="btn-group" role="group" aria-label="Booking Actions">
-                        <a href="{{ path('app_booking_edit', {'id': booking.id}) }}" class="btn btn-primary">Edit</a>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('app_booking_edit', {'id': booking.id}) }}" class="btn btn-primary" style="background-color: black; color: white; border: none;">Edit</a>
                         <form action="{{ path('app_booking_delete', {'id': booking.id}) }}" method="post" style="display: inline-block;">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ booking.id) }}">
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger" style="background-color: black; color: white; border: none;">Delete</button>
                         </form>
                     </div>
                     {% endif %}
