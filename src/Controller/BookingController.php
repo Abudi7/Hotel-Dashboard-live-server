@@ -219,22 +219,24 @@ class BookingController extends AbstractController
     }
 
     #[Route('/booking/delete/{id}', name: 'app_booking_delete')]
-    public function delete(Request $request, Booking $booking, BookingRepository $bookingRepository): Response
+    public function delete(Request $request, Booking $booking, Security $security): Response
     {
-        // Replace this part with CSRF token validation as needed
-        // if ($this->isCsrfTokenValid('delete'.$booking->getId(), $request->request->get('_token'))) {
-        $startDate = $booking->getStartdate(); // Adjust this based on your Booking entity
-        $endDate = $booking->getEnddate();     // Adjust this based on your Booking entity
-
-        // Delete bookings within the date range
-        $bookingRepository->deleteBookingsByDateRange($startDate, $endDate);
-        
-        // Optional: Delete the main booking record if required
-        $this->entityManager->remove($booking);
-        $this->entityManager->flush();
-
-        return $this->redirectToRoute('app_booking_filter');
+        // Check if the user has the admin role
+        if ($security->isGranted('ROLE_ADMIN')) {
+            // Replace this part with CSRF token validation as needed
+            // if ($this->isCsrfTokenValid('delete'.$booking->getId(), $request->request->get('_token'))) {
+            
+            // Delete the booking record
+            $this->entityManager->remove($booking);
+            $this->entityManager->flush();
+    
+            return $this->redirectToRoute('app_booking_filter');
+        } else {
+            // If the user is not an admin, deny access or handle accordingly
+            throw new AccessDeniedException('You do not have permission to delete this booking.');
+        }
     }
+    
 
     #[Route('/booking/filter', name: 'app_booking_filter')]
     public function filter(Request $request, BookingRepository $bookingRepository, UserRepository $userRepository): Response

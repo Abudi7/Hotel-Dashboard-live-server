@@ -31,8 +31,7 @@ class LostitemType extends AbstractType
             ->add('status', ChoiceType::class, [
                 'choices' => [
                     'Lost' => 'Lost',
-                    'Found' => 'Found',
-                    'Return' => 'Return',
+                    
                 ],
             ])
             ->add('ownerName')

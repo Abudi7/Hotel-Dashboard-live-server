@@ -68,16 +68,26 @@ class BookingType extends AbstractType
         $formData = $context->getRoot()->getData();
         $endDate = $formData->getEnddate();
         
-        if ($endDate !== null && $value > $endDate) {
-            $context->buildViolation('Start date cannot be after the end date.')
+        if ($endDate !== null && $value >= $endDate) {
+            // Check if start date is the same or after end date
+            $context->buildViolation('The start date must be at least one night before the end date.')
                 ->atPath('startdate')
                 ->addViolation();
+        } else if ($endDate !== null) {
+            // Check if there is at least one night between start and end date
+            $interval = $value->diff($endDate);
+            if ($interval->days < 1) {
+                $context->buildViolation('There must be at least one night between the start and end dates.')
+                    ->atPath('startdate')
+                    ->addViolation();
+            }
         }
-
+    
         if ($value < new \DateTime('today')) {
             $context->buildViolation('Start date cannot be in the past.')
                 ->atPath('startdate')
                 ->addViolation();
         }
     }
+    
 }

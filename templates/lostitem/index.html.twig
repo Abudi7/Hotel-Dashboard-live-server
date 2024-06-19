@@ -4,41 +4,56 @@
 {% block title %}Lost Items Index{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1 class="mt-4 mb-4 text-center">Lost Items</h1>
-
-        <div class="row">
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Lost Items</h1>
+        
+        {# Add action for creating a new lost item #}
+        <div class="d-flex justify-content-end mb-4">
+            <a href="{{ path('app_lostitem_new') }}" class="btn btn-success">Create New Lost Item</a>
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+        <div class="row mb-4">
             <div class="col-md-6">
                 <h3>Select Room</h3>
-                <form action="{{ path('app_lostitem_latest_booking') }}" method="get">
-                    
+                <form action="{{ path('app_lostitem_latest_booking') }}" method="get">  
                     <button type="submit" class="btn btn-primary">Fetch Latest Booking</button>
                 </form>
             </div>
         </div>
-
+        {% endif %}
         <hr>
 
-        <h3>All Lost Items</h3>
-        <div class="list-container">
+        <h3 class="mb-4">All Lost Items</h3>
+        <div class="row">
             {% if lostitems is not empty %}
                 {% for lostitem in lostitems %}
-                    <div class="list-item">
-                        <div>
-                            <p><strong>Id:</strong> {{ lostitem.id }}</p>
-                            <p><strong>Name:</strong> {{ lostitem.name }}</p>
-                            <p><strong>Description:</strong> {{ lostitem.description }}</p>
-                            <p><strong>Location Found:</strong> {{ lostitem.locationFound }}</p>
-                            <p><strong>Date Found:</strong> {{ lostitem.dateFound ? lostitem.dateFound|date('Y-m-d H:i:s') : '' }}</p>
-                            <p><strong>Status:</strong> {{ lostitem.status }}</p>
-                            <p><strong>Owner Name:</strong> {{ lostitem.ownerName }}</p>
-                            <p><strong>Owner Contact:</strong> {{ lostitem.ownerContact }}</p>
-                            <img style="border-radius: 2rem" src="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" class="img-fluid" alt="{{ lostitem.img }}">
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <img src="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" class="card-img-top" alt="{{ lostitem.img }}" style="border-radius: 0.5rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ lostitem.name }}</h5>
+                                <p class="card-text"><strong>Id:</strong> {{ lostitem.id }}</p>
+                                <p class="card-text"><strong>Description:</strong> {{ lostitem.description }}</p>
+                                <p class="card-text"><strong>Location Found:</strong> {{ lostitem.locationFound }}</p>
+                                <p class="card-text"><strong>Date Found:</strong> {{ lostitem.dateFound ? lostitem.dateFound|date('Y-m-d H:i:s') : '' }}</p>
+                                <p class="card-text"><strong>Status:</strong> {{ lostitem.status }}</p>
+                                <p class="card-text"><strong>Owner Name:</strong> {{ lostitem.ownerName }}</p>
+                                <p class="card-text"><strong>Owner Contact:</strong> {{ lostitem.ownerContact }}</p>
+                            </div>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <div class="card-footer d-flex justify-content-between">
+                                {# Add actions for editing and deleting a lost item #}
+                                <a href="{{ path('app_lostitem_edit', {'id': lostitem.id}) }}" class="btn btn-primary">Edit</a>
+                                <a href="{{ path('app_lostitem_delete', {'id': lostitem.id}) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
             {% else %}
-                <p class="no-records">No lost items found</p>
+                <div class="col-12">
+                    <p class="text-center text-muted">No lost items found</p>
+                </div>
             {% endif %}
         </div>
     </div>

