@@ -67,4 +67,21 @@ class CustomersController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/customer/delete/{id}', name: 'app_delete_customer', methods: ['POST'])]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        // Check if the CSRF token is valid
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
+            // Remove the user from the database
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            // Optionally add a flash message for user feedback
+            $this->addFlash('success', 'User deleted successfully.');
+        }
+
+        // Redirect back to the customers list page
+        return $this->redirectToRoute('app_customers');
+    }
 }
