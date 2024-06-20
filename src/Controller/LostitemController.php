@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 use App\Entity\Rooms; 
@@ -71,7 +74,7 @@ class LostitemController extends AbstractController
     }
     
     #[Route('/lostitem/new', name: 'app_lostitem_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager,MailerInterface $mailer, SluggerInterface $slugger, UserRepository $userRepository): Response
     {
         $lostitem = new Lostitem();
         $form = $this->createForm(LostitemType::class, $lostitem);
@@ -104,6 +107,33 @@ class LostitemController extends AbstractController
             // Persist the entity
             $entityManager->persist($lostitem);
             $entityManager->flush();
+
+           // Find admins
+           $admins = $userRepository->findByRole('ROLE_ADMIN');
+            //dd($admins);
+           // Send email notification to admins
+           foreach ($admins as $admin) {
+
+               $email = (new TemplatedEmail())
+                   ->from(new Address($lostitem->getOwnerContact(), $lostitem->getOwnerName()))
+                   ->to(new Address($admin->getEmail()))
+                   ->subject('New Lost Item Reported')
+                   ->htmlTemplate('email/lostitem_notification.html.twig')
+                   ->context([
+                       'lostitem' => $lostitem,
+                   ]);
+
+                   if ($lostitem->getImg()) {
+                    $email->attachFromPath(
+                        $this->getParameter('lostFounds_directory') . '/' . $lostitem->getImg(),
+                        $lostitem->getImg(),
+                        mime_content_type($this->getParameter('lostFounds_directory') . '/' . $lostitem->getImg())
+                    );
+                }
+
+               $mailer->send($email);
+           }
+
 
             // Redirect to index or wherever appropriate
             return $this->redirectToRoute('app_lostitem_index', [], Response::HTTP_SEE_OTHER);

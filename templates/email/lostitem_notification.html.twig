@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New Lost Item Reported</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Lost Item Reported</h1>
+        </div>
+        <div class="content">
+            <p>A new lost item has been reported with the following details:</p>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Name:</strong> {{ lostitem.name }}</li>
+                <li class="list-group-item"><strong>Description:</strong> {{ lostitem.description }}</li>
+                <li class="list-group-item"><strong>Location Lost:</strong> {{ lostitem.locationFound }}</li>
+                <li class="list-group-item"><strong>Date Lost:</strong> {{ lostitem.dateFound|date('Y-m-d') }}</li>
+                <li class="list-group-item"><strong>Status:</strong> {{ lostitem.status }}</li>
+                <li class="list-group-item"><strong>Owner Name:</strong> {{ lostitem.ownerName }}</li>
+                <li class="list-group-item"><strong>Owner Email:</strong> {{ lostitem.ownerContact }}</li>
+                {% if lostitem.img %}
+                    <li class="list-group-item">
+                        <strong>Image:</strong> 
+                        <a href="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" target="_blank">
+                            <img src="{{ asset('img/lost-Founds/' ~ lostitem.img) }}" class="img-thumbnail" style="max-width: 200px;">
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="footer">
+            <p>© {{ "now"|date("Y") }} Hotel-Dashboard. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
