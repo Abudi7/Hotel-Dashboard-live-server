@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -54,6 +56,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedat = null;
+
+    /**
+     * @var Collection<int, Lostitem>
+     */
+    #[ORM\OneToMany(targetEntity: Lostitem::class, mappedBy: 'user')]
+    private Collection $lostitems;
+
+    public function __construct()
+    {
+        $this->lostitems = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -214,6 +227,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedat(?\DateTimeInterface $updatedat): static
     {
         $this->updatedat = $updatedat;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lostitem>
+     */
+    public function getLostitems(): Collection
+    {
+        return $this->lostitems;
+    }
+
+    public function addLostitem(Lostitem $lostitem): static
+    {
+        if (!$this->lostitems->contains($lostitem)) {
+            $this->lostitems->add($lostitem);
+            $lostitem->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLostitem(Lostitem $lostitem): static
+    {
+        if ($this->lostitems->removeElement($lostitem)) {
+            // set the owning side to null (unless already changed)
+            if ($lostitem->getUser() === $this) {
+                $lostitem->setUser(null);
+            }
+        }
 
         return $this;
     }

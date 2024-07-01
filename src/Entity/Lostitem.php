@@ -38,6 +38,9 @@ class Lostitem
     #[ORM\Column(length: 255)]
     private ?string $img = null;
 
+    #[ORM\ManyToOne(inversedBy: 'lostitems')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,18 @@ class Lostitem
     public function setImg(string $img): static
     {
         $this->img = $img;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

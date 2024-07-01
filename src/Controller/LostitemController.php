@@ -19,7 +19,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-
+use Symfony\Component\Security\Core\Security;
 use App\Entity\Rooms; 
 
 class LostitemController extends AbstractController
@@ -27,7 +27,7 @@ class LostitemController extends AbstractController
     #[Route('/lostitem', name: 'app_lostitem_index', methods: ['GET'])]
     public function index(LostitemRepository $lostitemRepository, RoomsRepository $roomsRepository): Response
     {
-        $lostitems = $lostitemRepository->findAll(); // Fetch all lost items
+        $lostitems = $lostitemRepository->findByUser(); // Fetch lost items for the logged-in user
         $rooms = $roomsRepository->findAll(); // Fetch all rooms for dropdown
 
         return $this->render('lostitem/index.html.twig', [
@@ -35,6 +35,18 @@ class LostitemController extends AbstractController
             'rooms' => $rooms,
         ]);
     }
+    #[Route('/lostitem/admin', name: 'app_lostitem_index_admin', methods: ['GET'])]
+    public function adminIndex(LostitemRepository $lostitemRepository, RoomsRepository $roomsRepository): Response
+    {
+        $lostitems = $lostitemRepository->findAll(); // Fetch lost items for the logged-in user
+        $rooms = $roomsRepository->findAll(); // Fetch all rooms for dropdown
+
+        return $this->render('lostitem/adminIndex.html.twig', [
+            'lostitems' => $lostitems,
+            'rooms' => $rooms,
+        ]);
+    }
+    
     #[Route('/lostitems/latest-booking', name: 'app_lostitem_latest_booking', methods: ['GET'])]
     public function latestBookingDetails(Request $request, BookingRepository $bookingRepository, UserRepository $userRepository, RoomsRepository $roomsRepository): Response
     {
@@ -74,7 +86,7 @@ class LostitemController extends AbstractController
     }
     
     #[Route('/lostitem/new', name: 'app_lostitem_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager,MailerInterface $mailer, SluggerInterface $slugger, UserRepository $userRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager,MailerInterface $mailer, SluggerInterface $slugger, UserRepository $userRepository,Security $security): Response
     {
         $lostitem = new Lostitem();
         $form = $this->createForm(LostitemType::class, $lostitem);
@@ -103,6 +115,9 @@ class LostitemController extends AbstractController
                 // Store the filename in the database
                 $lostitem->setImg($newFilename);
             }
+             // Set the logged-in user as the owner of the lost item
+             $user = $security->getUser();
+             $lostitem->setUser($user);
 
             // Persist the entity
             $entityManager->persist($lostitem);

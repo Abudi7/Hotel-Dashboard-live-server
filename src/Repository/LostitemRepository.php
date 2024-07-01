@@ -6,15 +6,33 @@ use App\Entity\Lostitem;
 use App\Entity\Rooms;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Symfony\Component\Security\Core\Security;
 /**
  * @extends ServiceEntityRepository<Lostitem>
  */
 class LostitemRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $security;
+
+    public function __construct(ManagerRegistry $registry, Security $security)
     {
         parent::__construct($registry, Lostitem::class);
+        $this->security = $security;
+    }
+
+    /**
+     * @return Lostitem[] Returns an array of Lostitem objects for the logged-in user
+     */
+    public function findByUser()
+    {
+        $user = $this->security->getUser();
+        
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('l.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
     public function findByRoom(Rooms $room)
     {

@@ -136,9 +136,7 @@ class BookingController extends AbstractController
             'room' => $room
         ]);
     }
-    /**
-     * @Route("/booking/toggle-visibility", name="app_booking_toggle_visibility", methods={"POST"})
-     */
+    
     #[Route('/booking/toggle-visibility', name: 'app_booking_toggle_visibility')]
     public function toggleVisibility(Request $request, EntityManagerInterface $em)
     {
