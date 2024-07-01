@@ -68,7 +68,7 @@ class BookingController extends AbstractController
             
             $booking->setCustomername($customerName->getEmail());
             $booking->setRooms($room);
-            
+            $booking->setSwitcher("1");
             $username = $customerName->getName() . $customerName->getSurname();
 
             $now = new DateTime('now', new DateTimeZone(date_default_timezone_get()));
@@ -135,6 +135,27 @@ class BookingController extends AbstractController
             'availableRooms' => $availableRooms,
             'room' => $room
         ]);
+    }
+    /**
+     * @Route("/booking/toggle-visibility", name="app_booking_toggle_visibility", methods={"POST"})
+     */
+    #[Route('/booking/toggle-visibility', name: 'app_booking_toggle_visibility')]
+    public function toggleVisibility(Request $request, EntityManagerInterface $em)
+    {
+        $data = json_decode($request->getContent(), true);
+        $bookingId = $data['id'];
+        $switcherStatus = $data['switcher'];
+
+        $booking = $em->getRepository(Booking::class)->find($bookingId);
+
+        if ($booking) {
+            $booking->setSwitcher($switcherStatus);
+            $em->flush();
+
+            return new JsonResponse(['success' => true]);
+        }
+
+        return new JsonResponse(['success' => false], 400);
     }
     
 

@@ -8,7 +8,7 @@
     {% if bookings is not empty %}
     <div class="row">
         {% for booking in bookings %}
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4 booking-card {% if booking.switcher == 0 %}d-none{% endif %}" data-id="{{ booking.id }}">
             <div class="card">
                 <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="card-img-top custom-card-img" alt="{{ booking.rooms.name }}">
                 <div class="card-body">
@@ -26,6 +26,10 @@
                             <button type="submit" class="btn btn-danger" style="background-color: black; color: white; border: none;">Delete</button>
                         </form>
                     </div>
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input switcher" type="checkbox" id="switcher{{ booking.id }}" data-id="{{ booking.id }}" {% if booking.switcher == 1 %}checked{% endif %}>
+                        <label class="form-check-label" for="switcher{{ booking.id }}">Toggle Visibility</label>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -38,4 +42,37 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+document.querySelectorAll('.switcher').forEach(switcher => {
+    switcher.addEventListener('change', function() {
+        const bookingId = this.getAttribute('data-id');
+        const switcherStatus = this.checked ? 1 : 0;
+        fetch(`{{ path('app_booking_toggle_visibility') }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token('toggle_visibility') }}'
+            },
+            body: JSON.stringify({
+                id: bookingId,
+                switcher: switcherStatus
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const card = document.querySelector(`.booking-card[data-id="${bookingId}"]`);
+                if (switcherStatus === 1) {
+                    card.classList.remove('d-none');
+                } else {
+                    card.classList.add('d-none');
+                }
+            } else {
+                alert('Error toggling visibility');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

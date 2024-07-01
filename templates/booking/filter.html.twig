@@ -30,43 +30,79 @@
         <body>
             <div id='calendar'></div>
         </body>
-        <h1 style="margin-top:4rem"class="mb-4">Admin Dashboards</h1>
-        {% if bookings is not empty %}
-            <table class="table table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Customer Name</th>
-                        <th>Room Name</th>
-                        <th>Room Image</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Invoice Number</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for booking in bookings %}
-                        <tr>
-                            <td>{{ booking.id }}</td>
-                            <td>{{ users[loop.index0].name }} {{ users[loop.index0].surname }}</td>
-                            <td>{{ booking.rooms.name }}</td>
-                            <td>
-                                <div style="max-width: 100px;">
-                                    <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="img-thumbnail" alt="{{ booking.rooms.name }}">
-                                </div>
-                            </td>
-                            <td>{{ booking.startdate|date('Y-m-d') }}</td>
-                            <td>{{ booking.enddate|date('Y-m-d') }}</td>
-                            <td>{{ booking.invoicenumber }}</td>
-                            <td>
-                                <a href="{{ path('app_booking_edit', {'id': booking.id}) }}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
-                                <a href="{{ path('app_booking_delete', {'id': booking.id, 'token': csrf_token('delete' ~ booking.id)}) }}" class="btn btn-sm btn-outline-danger">Delete</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <h1 style="margin-top:4rem" class="mb-4">Admin Dashboards</h1>
+{% if bookings is not empty %}
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Booking ID</th>
+                <th>Customer Name</th>
+                <th>Room Name</th>
+                <th>Room Image</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Invoice Number</th>
+                <th>Visible</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr class="{{ booking.switcher == 0 ? 'table-warning' : '' }}">
+                    <td>{{ booking.id }}</td>
+                    <td>{{ users[loop.index0].name }} {{ users[loop.index0].surname }}</td>
+                    <td>{{ booking.rooms.name }}</td>
+                    <td>
+                        <div style="max-width: 100px;">
+                            <img src="{{ asset('img/image-rooms/' ~ booking.rooms.img) }}" class="img-thumbnail" alt="{{ booking.rooms.name }}">
+                        </div>
+                    </td>
+                    <td>{{ booking.startdate|date('Y-m-d') }}</td>
+                    <td>{{ booking.enddate|date('Y-m-d') }}</td>
+                    <td>{{ booking.invoicenumber }}</td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input switcher" type="checkbox" id="switcher{{ booking.id }}" data-id="{{ booking.id }}" {% if booking.switcher == 1 %}checked{% endif %}>
+                            <label class="form-check-label" for="switcher{{ booking.id }}"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{{ path('app_booking_edit', {'id': booking.id}) }}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                        <a href="{{ path('app_booking_delete', {'id': booking.id, 'token': csrf_token('delete' ~ booking.id)}) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<script>
+document.querySelectorAll('.switcher').forEach(switcher => {
+    switcher.addEventListener('change', function() {
+        const bookingId = this.getAttribute('data-id');
+        const switcherStatus = this.checked ? 1 : 0;
+        fetch(`{{ path('app_booking_toggle_visibility') }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token('toggle_visibility') }}'
+            },
+            body: JSON.stringify({
+                id: bookingId,
+                switcher: switcherStatus
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error toggling visibility');
+            }
+        });
+    });
+});
+</script>
+
         {% else %}
             <p>No bookings found.</p>
         {% endif %}

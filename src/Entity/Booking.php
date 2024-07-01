@@ -46,6 +46,9 @@ class Booking
     #[ORM\Column(length: 255)]
     private ?string $invoicenumber = null;
 
+    #[ORM\Column]
+    private ?bool $switcher = null;
+
     public function __construct()
     {
         
@@ -164,6 +167,18 @@ class Booking
     public function setInvoicenumber(string $invoicenumber): static
     {
         $this->invoicenumber = $invoicenumber;
+
+        return $this;
+    }
+
+    public function isSwitcher(): ?bool
+    {
+        return $this->switcher;
+    }
+
+    public function setSwitcher(bool $switcher): static
+    {
+        $this->switcher = $switcher;
 
         return $this;
     }
